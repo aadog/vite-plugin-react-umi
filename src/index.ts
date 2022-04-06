@@ -1,40 +1,36 @@
 import {Plugin} from "vite";
 import umi from "./umi";
-import {AntdOptions} from "./antd";
-import {RequestOptions} from "./request";
+import {AppData} from "./appdata";
+import {PluginOptions} from "./types";
 
 
-export interface PluginOptions {
-    //默认为 /src/main.tsx
-    runtime?: '/src/main.tsx'|'/src/App.tsx'|string
-    //默认不开启
-    antd?: AntdOptions
-    //默认{}
-    request?:RequestOptions|false
-}
-export {AntdOptions}
-
-
-export default function vitePluginReactUmi(options?:PluginOptions):Plugin[]{
+function setPluginOptionsDefaults(options?:PluginOptions):PluginOptions{
     if(!options){
-        options={
-
-        }
+        options={}
     }
-    if(options.request!=false&&!options.request){
-        options.request={
-
-        }
+    const {
+        runtime='/src/main.tsx',
+        antd = {style:'css'},
+        request= true,
+        route = {base:"/"},
+    }=options;
+    antd.style=antd.style||'css'
+    const pluginOptions={
+        runtime,
+        antd,
+        route,
+        request,
     }
-    if(!options.runtime){
-        options.runtime='/src/main.tsx'
-    }
-
-
-    return [umi(options),...usePlugins(options)]
+    return pluginOptions
 }
+export default function vitePluginReactUmi(options?: PluginOptions): Plugin[] {
+    const pluginOptions = setPluginOptionsDefaults(options)
+    AppData.initAppData(pluginOptions)
 
 
+
+    return [umi(pluginOptions), ...usePlugins(pluginOptions)]
+}
 function usePlugins(options: PluginOptions):Plugin[]{
     const plugins:Plugin[]=[]
     return plugins
