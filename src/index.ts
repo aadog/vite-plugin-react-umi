@@ -23,7 +23,7 @@ function setPluginOptionsDefaults(options?:PluginOptions):PluginOptions{
     }
     return pluginOptions
 }
-export default function vitePluginReactUmi(options?: PluginOptions): Plugin[] {
+export default function reactUmi(options?: PluginOptions): Plugin[] {
     const pluginOptions = setPluginOptionsDefaults(options)
     AppData.initAppData(pluginOptions)
 

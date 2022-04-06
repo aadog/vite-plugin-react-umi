@@ -19,12 +19,12 @@ function setPluginOptionsDefaults(options) {
     };
     return pluginOptions;
 }
-function vitePluginReactUmi(options) {
+function reactUmi(options) {
     const pluginOptions = setPluginOptionsDefaults(options);
     appdata_1.AppData.initAppData(pluginOptions);
     return [(0, umi_1.default)(pluginOptions), ...usePlugins(pluginOptions)];
 }
-exports.default = vitePluginReactUmi;
+exports.default = reactUmi;
 function usePlugins(options) {
     const plugins = [];
     return plugins;
