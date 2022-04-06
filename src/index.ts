@@ -5,8 +5,11 @@ import {RequestOptions} from "./request";
 
 
 export interface PluginOptions {
+    //默认为 /src/main.tsx
     runtime?: '/src/main.tsx'|'/src/App.tsx'|string
-    antd?: AntdOptions|false
+    //默认不开启
+    antd?: AntdOptions
+    //默认{}
     request?:RequestOptions|false
 }
 export {AntdOptions}
