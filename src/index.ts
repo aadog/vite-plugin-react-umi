@@ -9,16 +9,18 @@ function setPluginOptionsDefaults(options?:PluginOptions):PluginOptions{
         options={}
     }
     const {
-        runtime='/src/main.tsx',
+        runtime='src/main.tsx',
         antd = {style:'css'},
         request= true,
-        route = {base:"/"},
+        history = {type:'browser',basename:"/"},
     }=options;
     antd.style=antd.style||'css'
+    history.basename=history.basename||'/'
+    history.type=history.type||'browser'
     const pluginOptions={
         runtime,
         antd,
-        route,
+        history,
         request,
     }
     return pluginOptions

@@ -1,24 +1,21 @@
-
-
-export interface Route{
-    name?: string
-    path?: string
-    file?: string
-    icon?: string
-    access?: string
+type HistoryOption={
+    type: string
+    basename: string
 }
+
 export class AppData {
-    static version:string
-    static base:string
-    static clientRoutes: Route[]
+    static projectName:string
+    static pluginName:string
+    static pluginVersion:string
+    static history:HistoryOption
 }
 
-
-AppData.version=`<%=AppData.pluginVersion%>`
-AppData.base=`<%=AppData.pluginOptions.route.base%>`
-AppData.clientRoutes=[
-    {name:"首页",path:"/",file:"./index"}
-]
+AppData.projectName=`<%=AppData.projectName%>`
+AppData.pluginName=`<%=AppData.pluginName%>`
+AppData.pluginVersion=`<%=AppData.pluginVersion%>`
+AppData.history={basename:"",type:""}
+AppData.history.basename=`<%=AppData.pluginOptions.history.basename%>`
+AppData.history.type=`<%=AppData.pluginOptions.history.type%>`
 
 //appdata
 export function useAppData():AppData{

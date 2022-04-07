@@ -3,5 +3,5 @@ export declare class template {
     static registerBuiltin(): void;
     static registerImports(name: string, obj: any): void;
     static render(templateName: string, data?: Record<string, any>): string;
-    static renderToProjectUmi(templateName: string, data?: Record<string, any>): void;
+    static renderToProjectUmiFile(templateName: string, ext?: string, data?: Record<string, any>): void;
 }

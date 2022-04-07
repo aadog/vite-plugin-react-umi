@@ -18,6 +18,7 @@ export class template{
             ...data,
             AppData:{...AppData}
         }
+
         if(templateName.endsWith(AppData.templateExt)==false){
             templateName=`${templateName}${AppData.templateExt}`
         }
@@ -35,7 +36,8 @@ export class template{
 
         return templateRender(data)
     }
-    static renderToProjectUmi(templateName:string,data?:Record<string, any>){
+
+    static renderToProjectUmiFile(templateName:string,ext:string=".ts",data?:Record<string, any>){
         if(!fs.existsSync(AppData.projectUmiDir)){
             fs.mkdirSync(AppData.projectUmiDir,{recursive:true})
         }
@@ -44,7 +46,7 @@ export class template{
         if(templateName.endsWith(AppData.templateExt)){
             templateName.replaceAll(AppData.templateExt,"")
         }
-        templateName=`${templateName}.ts`
+        templateName=`${templateName}${ext}`
         fs.writeFileSync(AppData.getProjectUmiPath(templateName),str,{})
     }
 }

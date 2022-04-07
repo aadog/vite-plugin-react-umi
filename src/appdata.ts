@@ -12,11 +12,11 @@ export class AppData{
     static templateExt:string
 
     static pluginDir:string
-    static pluginId:string
+    static pluginName:string
     static pluginVersion:string
 
     static pluginPackage:PackageData
-    static projectId:string
+    static projectName:string
     static projectDir:string
     static projectUmiDir:string
     static projectPackage:PackageData
@@ -27,17 +27,17 @@ export class AppData{
         this.pluginOptions = pluginOptions
         const findPackage = pkgInfo.read(module)
         this.pluginPackage = resolvePackageData(findPackage.package.name, ".")
-        this.pluginId = this.pluginPackage.data.name
+        this.pluginName = this.pluginPackage.data.name
         this.pluginDir = this.pluginPackage.dir
         this.pluginVersion=this.pluginPackage.data.version
 
         this.projectPackage = resolvePackageData(".", ".")
-        this.projectId = this.projectPackage.data.name
+        this.projectName = this.projectPackage.data.name
         this.projectDir = this.projectPackage.dir
         this.projectUmiDir = path.join(this.projectDir, "src/.umi")
         this.templateDir=path.join(AppData.pluginDir,"files")
         this.templateExt=".tpl"
-        this.projectRuntimePath = path.join(this.projectDir, this.pluginOptions.runtime)
+        this.projectRuntimePath = path.join(this.projectDir,this.pluginOptions.runtime)
         this.runtimeExports=[]
         esModuleLexer.init.then(()=>{
             this.getRuntimeExports()

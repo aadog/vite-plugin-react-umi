@@ -1,8 +1,9 @@
 export interface RequestOptions{
 
 }
-export interface RouteOptions{
-    base?: string
+export interface HistoryOptions {
+    type?: ('browser'|'hash'|'memory')
+    basename?:string
 }
 
 export interface AntdOptions{
@@ -13,12 +14,12 @@ export interface AntdOptions{
 }
 export interface PluginOptions {
     //默认为 /src/main.tsx
-    runtime?: '/src/main.tsx'|'/src/App.tsx'|string
+    runtime?: 'src/main.tsx'|'src/App.tsx'|string
     //默认不开启
     antd?: AntdOptions
     //默认{}
     request?:RequestOptions|false
     //路由配置
-    route?:RouteOptions
+    history?:HistoryOptions
 }
 

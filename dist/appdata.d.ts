@@ -6,10 +6,10 @@ export declare class AppData {
     static templateDir: string;
     static templateExt: string;
     static pluginDir: string;
-    static pluginId: string;
+    static pluginName: string;
     static pluginVersion: string;
     static pluginPackage: PackageData;
-    static projectId: string;
+    static projectName: string;
     static projectDir: string;
     static projectUmiDir: string;
     static projectPackage: PackageData;

@@ -9,12 +9,14 @@ function setPluginOptionsDefaults(options) {
     if (!options) {
         options = {};
     }
-    const { runtime = '/src/main.tsx', antd = { style: 'css' }, request = true, route = { base: "/" }, } = options;
+    const { runtime = 'src/main.tsx', antd = { style: 'css' }, request = true, history = { type: 'browser', basename: "/" }, } = options;
     antd.style = antd.style || 'css';
+    history.basename = history.basename || '/';
+    history.type = history.type || 'browser';
     const pluginOptions = {
         runtime,
         antd,
-        route,
+        history,
         request,
     };
     return pluginOptions;

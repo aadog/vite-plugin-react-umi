@@ -57,7 +57,7 @@ class template {
         this.templateRenders[templateName] = templateRender;
         return templateRender(data);
     }
-    static renderToProjectUmi(templateName, data) {
+    static renderToProjectUmiFile(templateName, ext = ".ts", data) {
         if (!fs.existsSync(appdata_1.AppData.projectUmiDir)) {
             fs.mkdirSync(appdata_1.AppData.projectUmiDir, { recursive: true });
         }
@@ -65,7 +65,7 @@ class template {
         if (templateName.endsWith(appdata_1.AppData.templateExt)) {
             templateName.replaceAll(appdata_1.AppData.templateExt, "");
         }
-        templateName = `${templateName}.ts`;
+        templateName = `${templateName}${ext}`;
         fs.writeFileSync(appdata_1.AppData.getProjectUmiPath(templateName), str, {});
     }
 }

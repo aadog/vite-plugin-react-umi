@@ -38,10 +38,10 @@ class AppData {
     static templateDir;
     static templateExt;
     static pluginDir;
-    static pluginId;
+    static pluginName;
     static pluginVersion;
     static pluginPackage;
-    static projectId;
+    static projectName;
     static projectDir;
     static projectUmiDir;
     static projectPackage;
@@ -51,11 +51,11 @@ class AppData {
         this.pluginOptions = pluginOptions;
         const findPackage = pkginfo_1.default.read(module);
         this.pluginPackage = (0, vite_1.resolvePackageData)(findPackage.package.name, ".");
-        this.pluginId = this.pluginPackage.data.name;
+        this.pluginName = this.pluginPackage.data.name;
         this.pluginDir = this.pluginPackage.dir;
         this.pluginVersion = this.pluginPackage.data.version;
         this.projectPackage = (0, vite_1.resolvePackageData)(".", ".");
-        this.projectId = this.projectPackage.data.name;
+        this.projectName = this.projectPackage.data.name;
         this.projectDir = this.projectPackage.dir;
         this.projectUmiDir = path_1.default.join(this.projectDir, "src/.umi");
         this.templateDir = path_1.default.join(AppData.pluginDir, "files");

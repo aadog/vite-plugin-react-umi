@@ -6,6 +6,7 @@ import {
 import antd from "./antd";
 import {PluginOptions} from "./types";
 import {template} from "./template";
+import {AppData} from "./appdata";
 
 
 export default function umi(pluginOptions: PluginOptions): Plugin {
@@ -37,9 +38,13 @@ export default function umi(pluginOptions: PluginOptions): Plugin {
         configureServer(server) {
 
 
-            template.renderToProjectUmi("appData")
-            template.renderToProjectUmi("request")
-            template.renderToProjectUmi("index")
+            template.renderToProjectUmiFile("appData")
+            if(AppData.pluginOptions.request){
+                template.renderToProjectUmiFile("request")
+            }
+            template.renderToProjectUmiFile("history")
+            template.renderToProjectUmiFile("UmiApp",".tsx")
+            template.renderToProjectUmiFile("index")
 
         }
     }

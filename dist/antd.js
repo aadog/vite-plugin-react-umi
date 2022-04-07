@@ -44,7 +44,7 @@ class Antd {
         if (!appdata_1.AppData.pluginOptions.antd) {
             return code;
         }
-        if (/\"antd\";/.test(code)) {
+        if (!/(node_modules)/.test(id) && /(\"antd\")|(\'antd\')/.test(code)) {
             const importLine = code.match(ANTD_IMPORT_LINE_REG)[0];
             const cssLines = importLine
                 .match(/\w+/g)

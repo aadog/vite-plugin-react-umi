@@ -3,11 +3,11 @@ import axios, {
     type AxiosInstance,
     type AxiosRequestConfig,
     type AxiosResponse,
-} from '{{$imports.absPkgPath("axios")}}';
-import useUmiRequest, { UseRequestProvider } from '{{$imports.absPkgPath("@ahooksjs/use-request")}}';
-import { message, notification } from '{{$imports.absPkgPath("antd")}}';
-import '{{$imports.absPkgPath("antd")}}/es/message/style/index.css'
-import '{{$imports.absPkgPath("antd")}}/es/notification/style/index.css'
+} from 'axios';
+import useUmiRequest, { UseRequestProvider } from '@ahooksjs/use-request';
+import { message, notification } from 'antd';
+import 'antd/es/message/style/index.css'
+import 'antd/es/notification/style/index.css'
 import {
     BaseOptions,
     BasePaginatedOptions,
@@ -23,9 +23,9 @@ import {
     PaginatedOptionsWithFormat,
     PaginatedParams,
     PaginatedResult,
-} from '{{ $imports.absPkgPath("@ahooksjs/use-request")}}/es/types';
+} from '@ahooksjs/use-request/es/types';
 <%if(AppData.runtimeExports.includes('request')){
-print(`import {request as runtimeRequestConfig} from '${AppData.pluginOptions.runtime}'`)
+print(`import {request as runtimeRequestConfig} from '../../${AppData.pluginOptions.runtime}'`)
 }%>
 
 
@@ -198,6 +198,7 @@ let requestInstance: AxiosInstance;
 let config: RequestConfig;
 const getConfig = (): RequestConfig => {
     if (config) return config;
+    config={}
     <%if(AppData.runtimeExports.includes('request')){
     print(
     `config = {
