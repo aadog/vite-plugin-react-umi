@@ -2,9 +2,7 @@ import {IPluginOptions} from "./types";
 import path from "path";
 import {PackageData, resolvePackageData} from "vite";
 import pkgInfo from "pkginfo";
-import {Loader, transformSync} from "esbuild";
 import * as esModuleLexer from "es-module-lexer";
-import {readFileSync} from "fs";
 import * as fs from "fs";
 
 export class AppData{
@@ -40,7 +38,6 @@ export class AppData{
         this.projectUmiDir = path.join(this.projectDir, "src/.umi")
         this.templateDir=path.join(AppData.pluginDir,"files")
         this.templateExt=".tpl"
-        this.projectRuntimePath = path.join(this.projectDir,this.pluginOptions.runtime)
         this.runtimeExports=[]
 
 
@@ -57,7 +54,6 @@ export class AppData{
                 }
             })
             this.umiConfig=umiConfig
-            this.getRuntimeExports()
         })
 
 
@@ -69,25 +65,5 @@ export class AppData{
     }
     static getProjectUmiPath(name:string){
         return path.join(this.projectUmiDir,name)
-    }
-    static getRuntimeExports(){
-        const [_,exports]=this.parseModuleSync({content:readFileSync(this.projectRuntimePath,'utf-8'),filePath:this.projectRuntimePath})
-        if(!exports){
-            return
-        }
-        for (const exp of exports) {
-            this.runtimeExports.push(exp)
-        }
-        return exports
-    }
-    static parseModuleSync(opts: { content: string; filePath: string }) {
-        let content = opts.content;
-        if (opts.filePath.endsWith('.tsx') || opts.filePath.endsWith('.jsx')) {
-            content = transformSync(content, {
-                loader: path.extname(opts.filePath).slice(1) as Loader,
-                format: 'esm',
-            }).code;
-        }
-        return esModuleLexer.parse(content,"test");
     }
 }

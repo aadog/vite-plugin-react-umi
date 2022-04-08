@@ -30,9 +30,7 @@ exports.AppData = void 0;
 const path_1 = __importDefault(require("path"));
 const vite_1 = require("vite");
 const pkginfo_1 = __importDefault(require("pkginfo"));
-const esbuild_1 = require("esbuild");
 const esModuleLexer = __importStar(require("es-module-lexer"));
-const fs_1 = require("fs");
 const fs = __importStar(require("fs"));
 class AppData {
     static pluginOptions;
@@ -62,7 +60,6 @@ class AppData {
         this.projectUmiDir = path_1.default.join(this.projectDir, "src/.umi");
         this.templateDir = path_1.default.join(AppData.pluginDir, "files");
         this.templateExt = ".tpl";
-        this.projectRuntimePath = path_1.default.join(this.projectDir, this.pluginOptions.runtime);
         this.runtimeExports = [];
         if (!fs.existsSync(path_1.default.join(this.projectDir, "umiConfig.tsx"))) {
             return Error("配置文件不存在:umi.config.tsx");
@@ -77,7 +74,6 @@ class AppData {
                 }
             });
             this.umiConfig = umiConfig;
-            this.getRuntimeExports();
         });
         return null;
     }
@@ -86,26 +82,6 @@ class AppData {
     }
     static getProjectUmiPath(name) {
         return path_1.default.join(this.projectUmiDir, name);
-    }
-    static getRuntimeExports() {
-        const [_, exports] = this.parseModuleSync({ content: (0, fs_1.readFileSync)(this.projectRuntimePath, 'utf-8'), filePath: this.projectRuntimePath });
-        if (!exports) {
-            return;
-        }
-        for (const exp of exports) {
-            this.runtimeExports.push(exp);
-        }
-        return exports;
-    }
-    static parseModuleSync(opts) {
-        let content = opts.content;
-        if (opts.filePath.endsWith('.tsx') || opts.filePath.endsWith('.jsx')) {
-            content = (0, esbuild_1.transformSync)(content, {
-                loader: path_1.default.extname(opts.filePath).slice(1),
-                format: 'esm',
-            }).code;
-        }
-        return esModuleLexer.parse(content, "test");
     }
 }
 exports.AppData = AppData;

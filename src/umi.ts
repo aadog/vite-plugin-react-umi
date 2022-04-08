@@ -19,12 +19,11 @@ export default function umi(pluginOptions: IPluginOptions): Plugin {
                 resolve: {
                     alias: [
                         {find: "umi", replacement: ".umi"},
-                        {find: "@/", replacement:`${path.resolve(AppData.projectDir,"src")}/`},
+                        {find: "@/", replacement: `${path.resolve(AppData.projectDir, "src")}/`},
                     ]
                 }
             } as UserConfig)
-            config=antd?.config(config, env)
-
+            config = antd?.config(config, env)
 
 
             return config
@@ -36,19 +35,14 @@ export default function umi(pluginOptions: IPluginOptions): Plugin {
             return code;
         },
         configureServer(server) {
-
-
-
             template.renderToProjectUmiFile("appData")
             template.renderToProjectUmiFile("types")
-            template.renderToProjectUmiFile("umiConfig",".tsx",)
-            // // if(AppData.pluginOptions.request){
-            // //     template.renderToProjectUmiFile("request")
-            // // }
+            template.renderToProjectUmiFile("umiConfig", ".tsx",)
+            template.renderToProjectUmiFile("request")
             template.renderToProjectUmiFile("history")
-            template.renderToProjectUmiFile("UmiApp",".tsx")
+            template.renderToProjectUmiFile("UmiApp", ".tsx")
             template.renderToProjectUmiFile("index")
+        },
 
-        }
     }
 }

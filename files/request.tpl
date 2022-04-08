@@ -24,9 +24,7 @@ import {
     PaginatedParams,
     PaginatedResult,
 } from '@ahooksjs/use-request/es/types';
-<%if(AppData.runtimeExports.includes('request')){
-print(`import {request as runtimeRequestConfig} from '../../${AppData.pluginOptions.runtime}'`)
-}%>
+import {AppData} from "@/.umi/appData";
 
 
 
@@ -198,14 +196,7 @@ let requestInstance: AxiosInstance;
 let config: RequestConfig;
 const getConfig = (): RequestConfig => {
     if (config) return config;
-    config={}
-    <%if(AppData.runtimeExports.includes('request')){
-    print(
-    `config = {
-        ...config,
-        ...runtimeRequestConfig
-    }`)
-    }%>
+    config=AppData.umiConfig.request
     return config;
 };
 const getRequestInstance = (): AxiosInstance => {

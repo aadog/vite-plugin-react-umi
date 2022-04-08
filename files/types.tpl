@@ -23,7 +23,7 @@ export interface IUmiConfig{
     basename?:string
     routes?:IRoute[]
     //默认{}
-    request?:IRequestOptions|false
+    request?:IRequestOptions
 }
 
 export interface IAppData{

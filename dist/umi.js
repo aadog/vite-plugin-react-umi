@@ -32,13 +32,11 @@ function umi(pluginOptions) {
             template_1.template.renderToProjectUmiFile("appData");
             template_1.template.renderToProjectUmiFile("types");
             template_1.template.renderToProjectUmiFile("umiConfig", ".tsx");
-            // // if(AppData.pluginOptions.request){
-            // //     template.renderToProjectUmiFile("request")
-            // // }
+            template_1.template.renderToProjectUmiFile("request");
             template_1.template.renderToProjectUmiFile("history");
             template_1.template.renderToProjectUmiFile("UmiApp", ".tsx");
             template_1.template.renderToProjectUmiFile("index");
-        }
+        },
     };
 }
 exports.default = umi;

@@ -9,7 +9,9 @@ export function createHistory(opts: any) {
     } else if (opts.type === 'memory') {
         history = createMemoryHistory();
     } else {
-        history = createBrowserHistory();
+        history = createBrowserHistory({
+            window:window,
+        });
     }
     return history;
 }

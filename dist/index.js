@@ -28,20 +28,10 @@ function setPluginOptionsDefaults(options) {
     if (!options) {
         options = {};
     }
-    const { runtime = 'src/main.tsx', antd = { style: 'css' },
-    // request= true,
-    // router = {type:'browser',basename:"/"},
-    // routes = []
-     } = options;
+    const { antd = { style: 'css' }, } = options;
     antd.style = antd.style || 'css';
-    // router.basename=router.basename||'/'
-    // router.type=router.type||'browser'
     const pluginOptions = {
-        runtime,
         antd,
-        // router,
-        // request,
-        // routes,
     };
     return pluginOptions;
 }

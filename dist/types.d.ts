@@ -1,4 +1,5 @@
 import React from "react";
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
 export interface IRequestOptions {
 }
 export interface IAntdOptions {
@@ -14,12 +15,54 @@ export interface IRoute {
     [name: string]: any;
 }
 export interface IPluginOptions {
-    runtime?: 'src/main.tsx' | 'src/App.tsx' | string;
     antd?: IAntdOptions;
+}
+export declare enum ErrorShowType {
+    SILENT = 0,
+    WARN_MESSAGE = 1,
+    ERROR_MESSAGE = 2,
+    NOTIFICATION = 3,
+    REDIRECT = 9
+}
+export interface IErrorInfo {
+    success: boolean;
+    data?: any;
+    errorCode?: string;
+    errorMessage?: string;
+    showType?: ErrorShowType;
+    traceId?: string;
+    host?: string;
+    [key: string]: any;
+}
+export interface IAdaptor {
+    (resData: any, response: AxiosResponse): IErrorInfo;
+}
+export interface IErrorHandler {
+    (error: RequestError, opts: AxiosRequestConfig & {
+        skipErrorHandler?: boolean;
+    }, config: RequestConfig): void;
+}
+export interface RequestError extends Error {
+    data?: any;
+    info?: IErrorInfo;
+}
+export interface IFormatResultAdaptor {
+    (res: AxiosResponse): any;
+}
+export interface RequestConfig extends AxiosRequestConfig {
+    errorConfig?: {
+        errorPage?: string;
+        adaptor?: IAdaptor;
+        errorHandler?: IErrorHandler;
+        defaultCodeErrorMessage?: string;
+        defaultNoneResponseErrorMessage?: string;
+        defaultRequestErrorMessage?: string;
+    };
+    formatResultAdaptor?: IFormatResultAdaptor;
 }
 export interface IUmiConfig {
     type?: ('browser' | 'hash' | 'memory');
     basename?: string;
     routes?: IRoute[];
-    request?: IRequestOptions | false;
+    request?: RequestConfig;
 }
