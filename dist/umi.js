@@ -29,6 +29,7 @@ function umi(pluginOptions) {
             return code;
         },
         configureServer(server) {
+            console.log("run configureServer");
             template_1.template.renderToProjectUmiFile("appData", ".tsx");
             template_1.template.renderToProjectUmiFile("types");
             template_1.template.renderToProjectUmiFile("umiConfig", ".tsx");
