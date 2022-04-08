@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-react-umi",
-  "version": "1.0.23",
+  "version": "1.0.25",
   "description": "把umi模式干到vite,使用插件提供必要功能,没有过多的封装",
   "main": "./dist/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
   "devDependencies": {
     "@types/node": "^17.0.23",
     "@types/pkginfo": "^0.4.0",
-    "esbuild": "^0.14.31",
+    "esbuild": "^0.14.34",
     "lodash": "^4.17.21",
     "react": "^18.0.0",
     "rollup": "^2.70.1",
@@ -27,7 +27,7 @@
   ],
   "dependencies": {
     "@ahooksjs/use-request": "^2.8.15",
-    "antd": "4.19.4",
+    "antd": "4.19.5",
     "art-template": "^4.13.2",
     "axios": "^0.26.1",
     "es-module-lexer": "^0.10.5",
