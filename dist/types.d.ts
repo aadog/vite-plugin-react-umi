@@ -1,16 +1,25 @@
-export interface RequestOptions {
+import React from "react";
+export interface IRequestOptions {
 }
-export interface HistoryOptions {
-    type?: ('browser' | 'hash' | 'memory');
-    basename?: string;
-}
-export interface AntdOptions {
+export interface IAntdOptions {
     style?: ("css" | "less");
     pro?: boolean;
 }
-export interface PluginOptions {
+export interface IRoute {
+    caseSensitive?: boolean;
+    children?: IRoute[];
+    index?: boolean;
+    path?: string;
+    element?: React.ReactNode;
+    [name: string]: any;
+}
+export interface IPluginOptions {
     runtime?: 'src/main.tsx' | 'src/App.tsx' | string;
-    antd?: AntdOptions;
-    request?: RequestOptions | false;
-    history?: HistoryOptions;
+    antd?: IAntdOptions;
+}
+export interface IUmiConfig {
+    type?: ('browser' | 'hash' | 'memory');
+    basename?: string;
+    routes?: IRoute[];
+    request?: IRequestOptions | false;
 }

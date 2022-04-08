@@ -4,4 +4,3 @@ export {history,createSearchParams, Link, matchPath, matchRoutes, NavLink, Outle
 print(`export { useRequest, UseRequestProvider, request } from './request'`)
 }%>
 export {UmiApp} from './UmiApp'
-

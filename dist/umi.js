@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const vite_1 = require("vite");
 const antd_1 = __importDefault(require("./antd"));
 const template_1 = require("./template");
+const path_1 = __importDefault(require("path"));
 const appdata_1 = require("./appdata");
 function umi(pluginOptions) {
     return {
@@ -16,6 +17,7 @@ function umi(pluginOptions) {
                 resolve: {
                     alias: [
                         { find: "umi", replacement: ".umi" },
+                        { find: "@/", replacement: `${path_1.default.resolve(appdata_1.AppData.projectDir, "src")}/` },
                     ]
                 }
             });
@@ -28,9 +30,11 @@ function umi(pluginOptions) {
         },
         configureServer(server) {
             template_1.template.renderToProjectUmiFile("appData");
-            if (appdata_1.AppData.pluginOptions.request) {
-                template_1.template.renderToProjectUmiFile("request");
-            }
+            template_1.template.renderToProjectUmiFile("types");
+            template_1.template.renderToProjectUmiFile("umiConfig", ".tsx");
+            // // if(AppData.pluginOptions.request){
+            // //     template.renderToProjectUmiFile("request")
+            // // }
             template_1.template.renderToProjectUmiFile("history");
             template_1.template.renderToProjectUmiFile("UmiApp", ".tsx");
             template_1.template.renderToProjectUmiFile("index");

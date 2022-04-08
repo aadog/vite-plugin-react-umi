@@ -1,3 +1,3 @@
 import { Plugin } from "vite";
-import { PluginOptions } from "./types";
-export default function umi(pluginOptions: PluginOptions): Plugin;
+import { IPluginOptions } from "./types";
+export default function umi(pluginOptions: IPluginOptions): Plugin;

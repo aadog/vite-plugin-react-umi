@@ -1,13 +1,14 @@
-import {PluginOptions} from "./types";
+import {IPluginOptions} from "./types";
 import path from "path";
 import {PackageData, resolvePackageData} from "vite";
 import pkgInfo from "pkginfo";
 import {Loader, transformSync} from "esbuild";
 import * as esModuleLexer from "es-module-lexer";
 import {readFileSync} from "fs";
+import * as fs from "fs";
 
 export class AppData{
-    static pluginOptions:PluginOptions
+    static pluginOptions:IPluginOptions
     static templateDir:string
     static templateExt:string
 
@@ -23,7 +24,9 @@ export class AppData{
     static projectRuntimePath:string
     static runtimeExports:string[]
 
-    static async initAppData(pluginOptions: PluginOptions) {
+    static umiConfig:string
+
+    static initAppData(pluginOptions: IPluginOptions):Error{
         this.pluginOptions = pluginOptions
         const findPackage = pkgInfo.read(module)
         this.pluginPackage = resolvePackageData(findPackage.package.name, ".")
@@ -39,9 +42,27 @@ export class AppData{
         this.templateExt=".tpl"
         this.projectRuntimePath = path.join(this.projectDir,this.pluginOptions.runtime)
         this.runtimeExports=[]
+
+
+        if(!fs.existsSync(path.join(this.projectDir,"umiConfig.tsx"))){
+            return Error("配置文件不存在:umi.config.tsx")
+        }
         esModuleLexer.init.then(()=>{
+            let umiConfig=fs.readFileSync(path.join(this.projectDir,"umiConfig.tsx"),'utf-8')
+            const [imports,_]=esModuleLexer.parse(umiConfig)
+            imports.map((item)=>{
+                if(item.n.startsWith("./")){
+                    const fixPath=item.n.replaceAll("./","../../")
+                    umiConfig=umiConfig.replaceAll(item.n,fixPath)
+                }
+            })
+            this.umiConfig=umiConfig
             this.getRuntimeExports()
         })
+
+
+
+        return null
     }
     static getTemplatePath(name:string){
         return path.join(this.templateDir,name)

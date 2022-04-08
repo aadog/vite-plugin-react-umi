@@ -1,40 +1,52 @@
 import {Plugin} from "vite";
 import umi from "./umi";
 import {AppData} from "./appdata";
-import {PluginOptions} from "./types";
+import {IPluginOptions, IUmiConfig} from "./types";
 
-
-function setPluginOptionsDefaults(options?:PluginOptions):PluginOptions{
+export function defineUmi(umiConfig:IUmiConfig):IUmiConfig{
+    return umiConfig
+}
+function setPluginOptionsDefaults(options?:IPluginOptions):IPluginOptions{
     if(!options){
         options={}
     }
     const {
         runtime='src/main.tsx',
         antd = {style:'css'},
-        request= true,
-        history = {type:'browser',basename:"/"},
+        // request= true,
+        // router = {type:'browser',basename:"/"},
+        // routes = []
     }=options;
     antd.style=antd.style||'css'
-    history.basename=history.basename||'/'
-    history.type=history.type||'browser'
+    // router.basename=router.basename||'/'
+    // router.type=router.type||'browser'
+
     const pluginOptions={
         runtime,
         antd,
-        history,
-        request,
+        // router,
+        // request,
+        // routes,
     }
     return pluginOptions
 }
-export default function reactUmi(options?: PluginOptions): Plugin[] {
+export function createUmi(options?:IPluginOptions): Plugin[] {
+
     const pluginOptions = setPluginOptionsDefaults(options)
-    AppData.initAppData(pluginOptions)
+    const errInitAppData=AppData.initAppData(pluginOptions)
+    if(errInitAppData){
+        console.error(`createUmi失败:${errInitAppData}`)
+        return []
+    }
 
 
 
     return [umi(pluginOptions), ...usePlugins(pluginOptions)]
 }
-function usePlugins(options: PluginOptions):Plugin[]{
+function usePlugins(options: IPluginOptions):Plugin[]{
     const plugins:Plugin[]=[]
     return plugins
 }
+
+export * from './types'
 

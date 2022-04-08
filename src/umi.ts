@@ -4,14 +4,13 @@ import {
     UserConfig
 } from "vite";
 import antd from "./antd";
-import {PluginOptions} from "./types";
+import {IPluginOptions} from "./types";
 import {template} from "./template";
+import path from "path";
 import {AppData} from "./appdata";
 
 
-export default function umi(pluginOptions: PluginOptions): Plugin {
-
-
+export default function umi(pluginOptions: IPluginOptions): Plugin {
     return {
         name: "vite-plugin-react-umi",
         enforce: "pre",
@@ -20,6 +19,7 @@ export default function umi(pluginOptions: PluginOptions): Plugin {
                 resolve: {
                     alias: [
                         {find: "umi", replacement: ".umi"},
+                        {find: "@/", replacement:`${path.resolve(AppData.projectDir,"src")}/`},
                     ]
                 }
             } as UserConfig)
@@ -38,10 +38,13 @@ export default function umi(pluginOptions: PluginOptions): Plugin {
         configureServer(server) {
 
 
+
             template.renderToProjectUmiFile("appData")
-            if(AppData.pluginOptions.request){
-                template.renderToProjectUmiFile("request")
-            }
+            template.renderToProjectUmiFile("types")
+            template.renderToProjectUmiFile("umiConfig",".tsx",)
+            // // if(AppData.pluginOptions.request){
+            // //     template.renderToProjectUmiFile("request")
+            // // }
             template.renderToProjectUmiFile("history")
             template.renderToProjectUmiFile("UmiApp",".tsx")
             template.renderToProjectUmiFile("index")

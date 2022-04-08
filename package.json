@@ -16,6 +16,7 @@
     "@types/pkginfo": "^0.4.0",
     "esbuild": "^0.14.31",
     "lodash": "^4.17.21",
+    "react": "^18.0.0",
     "rollup": "^2.70.1",
     "typescript": "^4.6.3",
     "vite": "^2.9.1"

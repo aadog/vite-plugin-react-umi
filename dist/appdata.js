@@ -33,6 +33,7 @@ const pkginfo_1 = __importDefault(require("pkginfo"));
 const esbuild_1 = require("esbuild");
 const esModuleLexer = __importStar(require("es-module-lexer"));
 const fs_1 = require("fs");
+const fs = __importStar(require("fs"));
 class AppData {
     static pluginOptions;
     static templateDir;
@@ -47,7 +48,8 @@ class AppData {
     static projectPackage;
     static projectRuntimePath;
     static runtimeExports;
-    static async initAppData(pluginOptions) {
+    static umiConfig;
+    static initAppData(pluginOptions) {
         this.pluginOptions = pluginOptions;
         const findPackage = pkginfo_1.default.read(module);
         this.pluginPackage = (0, vite_1.resolvePackageData)(findPackage.package.name, ".");
@@ -62,9 +64,22 @@ class AppData {
         this.templateExt = ".tpl";
         this.projectRuntimePath = path_1.default.join(this.projectDir, this.pluginOptions.runtime);
         this.runtimeExports = [];
+        if (!fs.existsSync(path_1.default.join(this.projectDir, "umiConfig.tsx"))) {
+            return Error("配置文件不存在:umi.config.tsx");
+        }
         esModuleLexer.init.then(() => {
+            let umiConfig = fs.readFileSync(path_1.default.join(this.projectDir, "umiConfig.tsx"), 'utf-8');
+            const [imports, _] = esModuleLexer.parse(umiConfig);
+            imports.map((item) => {
+                if (item.n.startsWith("./")) {
+                    const fixPath = item.n.replaceAll("./", "../../");
+                    umiConfig = umiConfig.replaceAll(item.n, fixPath);
+                }
+            });
+            this.umiConfig = umiConfig;
             this.getRuntimeExports();
         });
+        return null;
     }
     static getTemplatePath(name) {
         return path_1.default.join(this.templateDir, name);

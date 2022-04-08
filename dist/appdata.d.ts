@@ -1,8 +1,8 @@
-import { PluginOptions } from "./types";
+import { IPluginOptions } from "./types";
 import { PackageData } from "vite";
 import * as esModuleLexer from "es-module-lexer";
 export declare class AppData {
-    static pluginOptions: PluginOptions;
+    static pluginOptions: IPluginOptions;
     static templateDir: string;
     static templateExt: string;
     static pluginDir: string;
@@ -15,7 +15,8 @@ export declare class AppData {
     static projectPackage: PackageData;
     static projectRuntimePath: string;
     static runtimeExports: string[];
-    static initAppData(pluginOptions: PluginOptions): Promise<void>;
+    static umiConfig: string;
+    static initAppData(pluginOptions: IPluginOptions): Error;
     static getTemplatePath(name: string): string;
     static getProjectUmiPath(name: string): string;
     static getRuntimeExports(): readonly string[];

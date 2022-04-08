@@ -37,6 +37,9 @@ class template {
         this.registerImports("absPkgPath", function (pkgName) {
             return (0, vite_1.resolvePackageData)(pkgName, ".").dir.replaceAll("\\", "/");
         });
+        this.registerImports("JSON.stringify", function (...v) {
+            return JSON.stringify(v);
+        });
     }
     static registerImports(name, obj) {
         art_template_1.default.defaults.imports[name] = obj;

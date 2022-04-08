@@ -9,6 +9,9 @@ export class template{
         this.registerImports("absPkgPath",function (pkgName:string) {
                 return resolvePackageData(pkgName,".").dir.replaceAll("\\","/")
             })
+        this.registerImports("JSON.stringify",function (...v: any){
+            return JSON.stringify(v)
+        })
     }
     static registerImports(name: string, obj: any):void{
         artTemplate.defaults.imports[name]=obj
@@ -47,6 +50,7 @@ export class template{
             templateName.replaceAll(AppData.templateExt,"")
         }
         templateName=`${templateName}${ext}`
+
         fs.writeFileSync(AppData.getProjectUmiPath(templateName),str,{})
     }
 }
