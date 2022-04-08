@@ -20,7 +20,6 @@ function setPluginOptionsDefaults(options?:IPluginOptions):IPluginOptions{
     return pluginOptions
 }
 export function createUmi(options?:IPluginOptions): Plugin[] {
-
     const pluginOptions = setPluginOptionsDefaults(options)
     const errInitAppData=AppData.initAppData(pluginOptions)
     if(errInitAppData){

@@ -1,6 +1,7 @@
 import {IUmiConfig,IAppData,defineUmi} from './types'
 import umiConfig from "./umiConfig";
 import {RouteObject} from "react-router-dom";
+import {Result} from "antd";
 
 
 export const AppData:IAppData={
@@ -23,7 +24,7 @@ function setDefaultUmiConfig(umiConfig:IUmiConfig):IUmiConfig{
         type = "browser",
         basename= "/",
         request={},
-        routes=[{path:"/",element:'还没有设置任何路由'}]
+        routes=[{path:"*",element:<Result status={'success'} title={`<%= AppData.pluginName %> <%= AppData.pluginVersion %>`} extra={"现在没有路由,在umiConfig中配置"} />}]
     } = umiConfig
 
     return defineUmi({

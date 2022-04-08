@@ -35,7 +35,7 @@ export default function umi(pluginOptions: IPluginOptions): Plugin {
             return code;
         },
         configureServer(server) {
-            template.renderToProjectUmiFile("appData")
+            template.renderToProjectUmiFile("appData",".tsx")
             template.renderToProjectUmiFile("types")
             template.renderToProjectUmiFile("umiConfig", ".tsx",)
             template.renderToProjectUmiFile("request")

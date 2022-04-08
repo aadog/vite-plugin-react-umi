@@ -12,6 +12,9 @@ export class template{
         this.registerImports("JSON.stringify",function (...v: any){
             return JSON.stringify(v)
         })
+        this.registerImports("replaceAll",function(v:string,searchValue: string | RegExp, replaceValue: string){
+            return v.replaceAll(searchValue,replaceValue)
+        })
     }
     static registerImports(name: string, obj: any):void{
         artTemplate.defaults.imports[name]=obj

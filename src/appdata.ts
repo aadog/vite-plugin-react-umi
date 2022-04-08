@@ -42,7 +42,7 @@ export class AppData{
 
 
         if(!fs.existsSync(path.join(this.projectDir,"umiConfig.tsx"))){
-            return Error("配置文件不存在:umi.config.tsx")
+            return Error("配置文件不存在:umiConfig.tsx")
         }
         esModuleLexer.init.then(()=>{
             let umiConfig=fs.readFileSync(path.join(this.projectDir,"umiConfig.tsx"),'utf-8')

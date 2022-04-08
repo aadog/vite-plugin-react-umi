@@ -29,7 +29,7 @@ function umi(pluginOptions) {
             return code;
         },
         configureServer(server) {
-            template_1.template.renderToProjectUmiFile("appData");
+            template_1.template.renderToProjectUmiFile("appData", ".tsx");
             template_1.template.renderToProjectUmiFile("types");
             template_1.template.renderToProjectUmiFile("umiConfig", ".tsx");
             template_1.template.renderToProjectUmiFile("request");

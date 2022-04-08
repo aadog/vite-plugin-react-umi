@@ -62,7 +62,7 @@ class AppData {
         this.templateExt = ".tpl";
         this.runtimeExports = [];
         if (!fs.existsSync(path_1.default.join(this.projectDir, "umiConfig.tsx"))) {
-            return Error("配置文件不存在:umi.config.tsx");
+            return Error("配置文件不存在:umiConfig.tsx");
         }
         esModuleLexer.init.then(() => {
             let umiConfig = fs.readFileSync(path_1.default.join(this.projectDir, "umiConfig.tsx"), 'utf-8');

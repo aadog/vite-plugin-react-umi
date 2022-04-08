@@ -40,6 +40,9 @@ class template {
         this.registerImports("JSON.stringify", function (...v) {
             return JSON.stringify(v);
         });
+        this.registerImports("replaceAll", function (v, searchValue, replaceValue) {
+            return v.replaceAll(searchValue, replaceValue);
+        });
     }
     static registerImports(name, obj) {
         art_template_1.default.defaults.imports[name] = obj;
