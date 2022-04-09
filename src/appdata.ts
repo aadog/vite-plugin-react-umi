@@ -35,7 +35,7 @@ export class AppData{
         this.projectPackage = resolvePackageData(".", ".")
         this.projectName = this.projectPackage.data.name
         this.projectDir = this.projectPackage.dir
-        this.projectUmiDir = path.join(this.projectDir, "src/.umi")
+        this.projectUmiDir = path.join(this.projectDir, `./src/${pluginOptions.tempDir}`)
         this.templateDir=path.join(AppData.pluginDir,"files")
         this.templateExt=".tpl"
         this.runtimeExports=[]
@@ -49,8 +49,11 @@ export class AppData{
             const [imports,_]=esModuleLexer.parse(umiConfig)
             imports.map((item)=>{
                 if(item.n.startsWith("./")){
-                    const fixPath=item.n.replaceAll("./","../../")
-                    umiConfig=umiConfig.replaceAll(item.n,fixPath)
+                    const fixPath=item.n.replace(RegExp("./",),"../../")
+                    umiConfig=umiConfig.replace(RegExp(item.n,"g"),fixPath)
+                }else if(item.n.includes(this.pluginName)){
+                    const fixPath=item.n.replace(RegExp(`${this.pluginName}`,"g"),"./types")
+                    umiConfig=umiConfig.replace(RegExp(item.n,"g"),fixPath)
                 }
             })
             this.umiConfig=umiConfig

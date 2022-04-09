@@ -12,10 +12,12 @@ function setPluginOptionsDefaults(options?:IPluginOptions):IPluginOptions{
     }
     const {
         antd = {style:'css'},
+        tempDir = ".umi"
     }=options;
     antd.style=antd.style||'css'
     const pluginOptions={
         antd,
+        tempDir: tempDir
     }
     return pluginOptions
 }

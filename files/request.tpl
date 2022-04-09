@@ -24,7 +24,7 @@ import {
     PaginatedParams,
     PaginatedResult,
 } from '@ahooksjs/use-request/es/types';
-import {AppData} from "@/.umi/appData";
+import {AppData} from "../../src/<%=AppData.pluginOptions.tempDir%>/appData";
 
 
 

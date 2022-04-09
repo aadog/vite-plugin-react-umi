@@ -21,6 +21,7 @@ export interface IRoute{
 export interface IPluginOptions {
     //默认不开启
     antd?: IAntdOptions
+    tempDir?: '.umi'|string
 }
 
 export enum ErrorShowType {
