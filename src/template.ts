@@ -53,7 +53,6 @@ export class template{
             templateName.replaceAll(AppData.templateExt,"")
         }
         templateName=`${templateName}${ext}`
-
         fs.writeFileSync(AppData.getProjectUmiPath(templateName),str,{})
     }
 }
