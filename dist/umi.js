@@ -34,7 +34,7 @@ function umi(pluginOptions) {
             appdata_1.AppData.generateFiles();
         },
         handleHotUpdate(ctx) {
-            if (ctx.file.endsWith("umiConfig.tsx")) {
+            if (path_1.default.basename(ctx.file) == 'umiConfig.tsx' && path_1.default.basename(path_1.default.dirname(ctx.file)) == appdata_1.AppData.projectName) {
                 appdata_1.AppData.generateFiles();
             }
         }

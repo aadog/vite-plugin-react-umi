@@ -15,8 +15,8 @@ export declare class AppData {
     static projectRuntimePath: string;
     static runtimeExports: string[];
     static umiConfig: string;
-    static generateFiles(): void;
-    static loadUmiConfig(): void;
+    static generateFiles(): Promise<void>;
+    static loadUmiConfig(): Promise<void>;
     static initAppData(pluginOptions: IPluginOptions): Error;
     static getTemplatePath(name: string): string;
     static getProjectUmiPath(name: string): string;

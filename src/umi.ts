@@ -40,11 +40,11 @@ export default function umi(pluginOptions: IPluginOptions): Plugin {
             return code;
         },
         configureServer(server) {
-            AppData.generateFiles()
+             AppData.generateFiles()
         },
 
         handleHotUpdate(ctx: HmrContext): Array<ModuleNode> | void | Promise<Array<ModuleNode> | void> {
-            if(ctx.file.endsWith("umiConfig.tsx")){
+            if(path.basename(ctx.file)=='umiConfig.tsx'&&path.basename(path.dirname(ctx.file))==AppData.projectName){
                 AppData.generateFiles()
             }
         }

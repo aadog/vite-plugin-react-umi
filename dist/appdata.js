@@ -48,10 +48,10 @@ class AppData {
     static projectRuntimePath;
     static runtimeExports;
     static umiConfig;
-    static generateFiles() {
-        AppData.loadUmiConfig();
-        (0, vite_1.transformWithEsbuild)(this.umiConfig, path_1.default.join(this.projectDir, "umiConfig.tsx")).then((result) => {
-            console.log(`  ${AppData.pluginName} updating...`);
+    static async generateFiles() {
+        try {
+            await AppData.loadUmiConfig();
+            await (0, vite_1.transformWithEsbuild)(this.umiConfig, path_1.default.join(this.projectDir, "umiConfig.tsx"));
             template_1.template.renderToProjectUmiFile("appData", ".tsx");
             template_1.template.renderToProjectUmiFile("types");
             template_1.template.renderToProjectUmiFile("umiConfig", ".tsx");
@@ -60,24 +60,27 @@ class AppData {
             template_1.template.renderToProjectUmiFile("UmiApp", ".tsx");
             template_1.template.renderToProjectUmiFile("index");
             console.log(`  ${AppData.pluginName} complete`);
-        }).catch((err) => {
+        }
+        catch (err) {
             console.log(err);
-        });
+        }
     }
-    static loadUmiConfig() {
-        let umiConfig = fs.readFileSync(path_1.default.join(this.projectDir, "umiConfig.tsx"), { encoding: 'utf-8', flag: 'r' });
-        const [imports, _] = esModuleLexer.parse(umiConfig);
-        imports.map((item) => {
-            if (item.n.startsWith("./")) {
-                const fixPath = item.n.replace(RegExp("./"), "../../");
-                umiConfig = umiConfig.replace(RegExp(item.n, "g"), fixPath);
-            }
-            else if (item.n.includes(this.pluginName)) {
-                const fixPath = item.n.replace(RegExp(`${this.pluginName}`, "g"), "./types");
-                umiConfig = umiConfig.replace(RegExp(item.n, "g"), fixPath);
-            }
+    static async loadUmiConfig() {
+        await esModuleLexer.init.then(() => {
+            let umiConfig = fs.readFileSync(path_1.default.join(this.projectDir, "umiConfig.tsx"), { encoding: 'utf-8', flag: 'r' });
+            const [imports, _] = esModuleLexer.parse(umiConfig);
+            imports.map((item) => {
+                if (item.n.startsWith("./")) {
+                    const fixPath = item.n.replace(RegExp("./"), "../../");
+                    umiConfig = umiConfig.replace(RegExp(item.n, "g"), fixPath);
+                }
+                else if (item.n.includes(this.pluginName)) {
+                    const fixPath = item.n.replace(RegExp(`${this.pluginName}`, "g"), "./types");
+                    umiConfig = umiConfig.replace(RegExp(item.n, "g"), fixPath);
+                }
+            });
+            this.umiConfig = umiConfig;
         });
-        this.umiConfig = umiConfig;
     }
     static initAppData(pluginOptions) {
         this.pluginOptions = pluginOptions;
@@ -96,9 +99,7 @@ class AppData {
         if (!fs.existsSync(path_1.default.join(this.projectDir, "umiConfig.tsx"))) {
             return Error("配置文件不存在:umiConfig.tsx");
         }
-        esModuleLexer.init.then(() => {
-            this.loadUmiConfig();
-        });
+        this.loadUmiConfig();
         return null;
     }
     static getTemplatePath(name) {
