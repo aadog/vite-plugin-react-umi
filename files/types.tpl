@@ -1,13 +1,11 @@
 import React from "react";
+import {RequestConfig} from "./request";
 
 export interface AntdOptions{
     //使用css还是less,会自动配置按需导入
     style?: ("css" | "less")
     //是否使用ant design pro,会自动处理别名问题
     pro?:boolean
-}
-export interface IRequestOptions {
-
 }
 export interface IRoute{
     //区分大小写
@@ -19,11 +17,17 @@ export interface IRoute{
     [name:string]:any
 }
 export interface IUmiConfig{
+    //默认 'browser'
     type?: ('browser'|'hash'|'memory')
+    //默认 "/"
     basename?:string
+    //默认 {}
+    request?:RequestConfig
+    //初始化状态
+    getInitialState?:()=>Promise<any>
+    //默认 []
     routes?:IRoute[]
-    //默认{}
-    request?:IRequestOptions
+
 }
 
 export interface IAppData{

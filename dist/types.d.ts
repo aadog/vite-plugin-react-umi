@@ -64,6 +64,7 @@ export interface RequestConfig extends AxiosRequestConfig {
 export interface IUmiConfig {
     type?: ('browser' | 'hash' | 'memory');
     basename?: string;
-    routes?: IRoute[];
     request?: RequestConfig;
+    getInitialState?: () => Promise<any>;
+    routes?: IRoute[];
 }

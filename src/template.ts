@@ -2,6 +2,7 @@ import * as fs from "fs";
 import {resolvePackageData} from "vite";
 import {AppData} from "./appdata";
 import artTemplate from "art-template";
+import path from "path";
 
 export class template{
     static templateRenders:{}={}
@@ -14,6 +15,14 @@ export class template{
         })
         this.registerImports("RegExp",function(e,p){
             return new RegExp(e,p)
+        })
+        this.registerImports("ListSystemModels",function () {
+            const r=[]
+            const ls=fs.readdirSync(path.join(AppData.projectUmiDir,"models"))
+            ls.map((item)=>{
+                r.push(item.replace(/.tsx$/g,""))
+            })
+            return r
         })
     }
     static registerImports(name: string, obj: any):void{
@@ -33,7 +42,6 @@ export class template{
         }
         const templatePath=AppData.getTemplatePath(templateName)
 
-
         const templateRender=artTemplate.compile(
             fs.readFileSync(templatePath,'utf-8'),
             {noEscape:true}
@@ -46,6 +54,10 @@ export class template{
     static renderToProjectUmiFile(templateName:string,ext:string=".ts",data?:Record<string, any>){
         if(!fs.existsSync(AppData.projectUmiDir)){
             fs.mkdirSync(AppData.projectUmiDir,{recursive:true})
+        }
+        const absPath=path.join(AppData.projectUmiDir,templateName)
+        if(!fs.existsSync(path.dirname(absPath))){
+            fs.mkdirSync(path.dirname(absPath),{recursive:true})
         }
 
         const str=this.render(templateName,data)

@@ -31,6 +31,7 @@ const fs = __importStar(require("fs"));
 const vite_1 = require("vite");
 const appdata_1 = require("./appdata");
 const art_template_1 = __importDefault(require("art-template"));
+const path_1 = __importDefault(require("path"));
 class template {
     static templateRenders = {};
     static registerBuiltin() {
@@ -42,6 +43,14 @@ class template {
         });
         this.registerImports("RegExp", function (e, p) {
             return new RegExp(e, p);
+        });
+        this.registerImports("ListSystemModels", function () {
+            const r = [];
+            const ls = fs.readdirSync(path_1.default.join(appdata_1.AppData.projectUmiDir, "models"));
+            ls.map((item) => {
+                r.push(item.replace(/.tsx$/g, ""));
+            });
+            return r;
         });
     }
     static registerImports(name, obj) {
@@ -66,6 +75,10 @@ class template {
     static renderToProjectUmiFile(templateName, ext = ".ts", data) {
         if (!fs.existsSync(appdata_1.AppData.projectUmiDir)) {
             fs.mkdirSync(appdata_1.AppData.projectUmiDir, { recursive: true });
+        }
+        const absPath = path_1.default.join(appdata_1.AppData.projectUmiDir, templateName);
+        if (!fs.existsSync(path_1.default.dirname(absPath))) {
+            fs.mkdirSync(path_1.default.dirname(absPath), { recursive: true });
         }
         const str = this.render(templateName, data);
         if (templateName.endsWith(appdata_1.AppData.templateExt)) {

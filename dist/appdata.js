@@ -58,6 +58,9 @@ class AppData {
             template_1.template.renderToProjectUmiFile("request");
             template_1.template.renderToProjectUmiFile("history");
             template_1.template.renderToProjectUmiFile("UmiApp", ".tsx");
+            template_1.template.renderToProjectUmiFile("model", ".tsx");
+            template_1.template.renderToProjectUmiFile("modelRuntime", ".tsx");
+            template_1.template.renderToProjectUmiFile("models/@@initialState", ".tsx");
             template_1.template.renderToProjectUmiFile("index");
             console.log(`  ${AppData.pluginName} complete`);
         }

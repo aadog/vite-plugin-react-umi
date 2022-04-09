@@ -32,6 +32,7 @@ function setDefaultUmiConfig(umiConfig:IUmiConfig):IUmiConfig{
     }
 
     return defineUmi({
+        ...umiConfig,
         type,
         basename,
         request,

@@ -36,6 +36,9 @@ export class AppData {
             template.renderToProjectUmiFile("request")
             template.renderToProjectUmiFile("history")
             template.renderToProjectUmiFile("UmiApp", ".tsx")
+            template.renderToProjectUmiFile("model",".tsx")
+            template.renderToProjectUmiFile("modelRuntime",".tsx")
+            template.renderToProjectUmiFile("models/@@initialState",".tsx")
             template.renderToProjectUmiFile("index")
             console.log(`  ${AppData.pluginName} complete`)
         } catch (err) {

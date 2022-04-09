@@ -11,9 +11,6 @@ function umi(pluginOptions) {
     return {
         name: "vite-plugin-react-umi",
         enforce: "pre",
-        watchChange: () => {
-            console.log("aaa");
-        },
         config(config, env) {
             config = (0, vite_1.mergeConfig)(config, {
                 resolve: {

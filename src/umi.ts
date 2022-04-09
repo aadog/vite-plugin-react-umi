@@ -16,9 +16,6 @@ export default function umi(pluginOptions: IPluginOptions): Plugin {
     return {
         name: "vite-plugin-react-umi",
         enforce: "pre",
-        watchChange:()=>{
-          console.log("aaa")
-        },
 
         config(config, env) {
             config = mergeConfig(config, {
