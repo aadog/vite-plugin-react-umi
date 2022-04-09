@@ -1,9 +1,10 @@
 import {IPluginOptions} from "./types";
 import path from "path";
-import {PackageData, resolvePackageData} from "vite";
+import {PackageData, resolvePackageData, transformWithEsbuild} from "vite";
 import pkgInfo from "pkginfo";
 import * as esModuleLexer from "es-module-lexer";
 import * as fs from "fs";
+import {template} from "./template";
 
 export class AppData{
     static pluginOptions:IPluginOptions
@@ -23,6 +24,38 @@ export class AppData{
     static runtimeExports:string[]
 
     static umiConfig:string
+
+
+    static generateFiles(){
+        AppData.loadUmiConfig()
+        transformWithEsbuild(this.umiConfig,path.join(this.projectDir,"umiConfig.tsx")).then((result)=>{
+            console.log(`  ${AppData.pluginName} updating...`)
+            template.renderToProjectUmiFile("appData",".tsx")
+            template.renderToProjectUmiFile("types")
+            template.renderToProjectUmiFile("umiConfig", ".tsx",)
+            template.renderToProjectUmiFile("request")
+            template.renderToProjectUmiFile("history")
+            template.renderToProjectUmiFile("UmiApp", ".tsx")
+            template.renderToProjectUmiFile("index")
+            console.log(`  ${AppData.pluginName} complete`)
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+    static loadUmiConfig(){
+        let umiConfig=fs.readFileSync(path.join(this.projectDir,"umiConfig.tsx"),{encoding:'utf-8',flag:'r'})
+        const [imports,_]=esModuleLexer.parse(umiConfig)
+        imports.map((item)=>{
+            if(item.n.startsWith("./")){
+                const fixPath=item.n.replace(RegExp("./",),"../../")
+                umiConfig=umiConfig.replace(RegExp(item.n,"g"),fixPath)
+            }else if(item.n.includes(this.pluginName)){
+                const fixPath=item.n.replace(RegExp(`${this.pluginName}`,"g"),"./types")
+                umiConfig=umiConfig.replace(RegExp(item.n,"g"),fixPath)
+            }
+        })
+        this.umiConfig=umiConfig
+    }
 
     static initAppData(pluginOptions: IPluginOptions):Error{
         this.pluginOptions = pluginOptions
@@ -45,18 +78,7 @@ export class AppData{
             return Error("配置文件不存在:umiConfig.tsx")
         }
         esModuleLexer.init.then(()=>{
-            let umiConfig=fs.readFileSync(path.join(this.projectDir,"umiConfig.tsx"),'utf-8')
-            const [imports,_]=esModuleLexer.parse(umiConfig)
-            imports.map((item)=>{
-                if(item.n.startsWith("./")){
-                    const fixPath=item.n.replace(RegExp("./",),"../../")
-                    umiConfig=umiConfig.replace(RegExp(item.n,"g"),fixPath)
-                }else if(item.n.includes(this.pluginName)){
-                    const fixPath=item.n.replace(RegExp(`${this.pluginName}`,"g"),"./types")
-                    umiConfig=umiConfig.replace(RegExp(item.n,"g"),fixPath)
-                }
-            })
-            this.umiConfig=umiConfig
+            this.loadUmiConfig()
         })
 
 

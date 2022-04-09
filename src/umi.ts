@@ -1,11 +1,11 @@
 import {
-    mergeConfig,
+    HmrContext,
+    mergeConfig, ModuleNode,
     Plugin,
     UserConfig
 } from "vite";
 import antd from "./antd";
 import {IPluginOptions} from "./types";
-import {template} from "./template";
 import path from "path";
 import {AppData} from "./appdata";
 
@@ -40,15 +40,13 @@ export default function umi(pluginOptions: IPluginOptions): Plugin {
             return code;
         },
         configureServer(server) {
-            console.log("run configureServer")
-            template.renderToProjectUmiFile("appData",".tsx")
-            template.renderToProjectUmiFile("types")
-            template.renderToProjectUmiFile("umiConfig", ".tsx",)
-            template.renderToProjectUmiFile("request")
-            template.renderToProjectUmiFile("history")
-            template.renderToProjectUmiFile("UmiApp", ".tsx")
-            template.renderToProjectUmiFile("index")
+            AppData.generateFiles()
         },
 
+        handleHotUpdate(ctx: HmrContext): Array<ModuleNode> | void | Promise<Array<ModuleNode> | void> {
+            if(ctx.file.endsWith("umiConfig.tsx")){
+                AppData.generateFiles()
+            }
+        }
     }
 }
