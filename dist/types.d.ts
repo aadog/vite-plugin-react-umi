@@ -70,6 +70,6 @@ export interface IUmiConfig {
     request?: RequestConfig;
     getInitialState?: Function;
     skipAccess?: boolean;
-    access: (initialState?: Record<string, any>) => Record<string, any>;
+    access?: (initialState?: Record<string, any>) => Record<string, any>;
     routes?: IRoute[];
 }

@@ -83,7 +83,7 @@ export interface IUmiConfig{
     //跳过权限处理,自己手动处理权限
     skipAccess?:boolean
     //权限设置
-    access:(initialState?:Record<string, any>)=>Record<string, any>
+    access?:(initialState?:Record<string, any>)=>Record<string, any>
     //默认 []
     routes?:IRoute[]
 }

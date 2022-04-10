@@ -25,7 +25,8 @@ function setDefaultUmiConfig(umiConfig:IUmiConfig):IUmiConfig{
         basename= "/",
         request={},
         routes=[{path:"*",element:<Result status={'success'} title={`<%= AppData.pluginName %> <%= AppData.pluginVersion %>`} extra={"现在没有路由,在umiConfig中配置"} />} as IRoute],
-        getInitialState = ()=>{return Promise.resolve(undefined)}
+        getInitialState = ()=>{return undefined},
+        access= ()=>{return {}}
     } = umiConfig
     if(routes.length==0){
         routes.push(defaultRouter)
@@ -38,6 +39,7 @@ function setDefaultUmiConfig(umiConfig:IUmiConfig):IUmiConfig{
         request,
         routes,
         getInitialState,
+        access,
     })
 }
 
@@ -84,7 +86,7 @@ function WrapRoute(props:any){
         return umiAppContext.initialStateLoading
     }
     const elProps={
-        ...props,
+        ...props.children.props,
     }
 
     return (
