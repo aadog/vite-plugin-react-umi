@@ -15,7 +15,13 @@ export default () => {
     const refresh = useCallback(async () => {
         setState((s) => ({ ...s, loading: true, error: undefined }));
         try {
-            const ret = await useAppData().umiConfig.getInitialState();
+            let ret:any
+            if(Object.prototype.toString.call(useAppData().umiConfig.getInitialState).includes("AsyncFunction")){
+                ret = await useAppData().umiConfig.getInitialState();
+                console.log(ret)
+            }else{
+                ret = useAppData().umiConfig.getInitialState();
+            }
             setState((s) => ({ ...s, initialState: ret, loading: false }));
         } catch (e) {
             setState((s) => ({ ...s, error: e, loading: false }));

@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-react-umi",
-  "version": "1.0.55",
-  "description": "把umi模式干到vite,使用插件提供必要功能,没有过多的封装",
+  "version": "1.0.56",
+  "description": "模仿umi,或者是抄袭umi后进行改装,特别好用",
   "main": "./dist/index.js",
   "scripts": {
     "dev": "tsc -w -p .",

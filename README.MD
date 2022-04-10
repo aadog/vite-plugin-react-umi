@@ -29,7 +29,6 @@ import Two from "./src/two";
 const App = lazy(() => import("./src/App"))
 
 export default defineUmi({
-    request: {},
     routes: [
         {path:'/',element:<Entry />}
         ,{

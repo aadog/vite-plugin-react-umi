@@ -68,7 +68,8 @@ export interface IUmiConfig {
     type?: ('browser' | 'hash' | 'memory');
     basename?: string;
     request?: RequestConfig;
-    getInitialState?: () => Promise<any>;
+    getInitialState?: Function;
+    skipAccess?: boolean;
     access: (initialState?: Record<string, any>) => Record<string, any>;
     routes?: IRoute[];
 }

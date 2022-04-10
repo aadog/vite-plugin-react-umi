@@ -41,11 +41,13 @@ type UmiAppProps = {
     initialStateLoading?: React.ReactElement|null;
     initialStateError?: React.ReactElement|null;
     initialStateSync?: boolean
+    initialPropsSync?: boolean
     noAccess?:React.ReactElement
 }
 export const UmiApp: React.FC<UmiAppProps> = (props) => {
     const umiAppContext = React.useContext(UmiAppContext);
-    umiAppContext.initialStateSync=props.initialStateSync==false||umiAppContext.initialStateSync
+    umiAppContext.initialStateSync=props.initialStateSync==false?false:umiAppContext.initialStateSync
+    umiAppContext.initialPropsSync=props.initialPropsSync==false?false:umiAppContext.initialPropsSync
     umiAppContext.initialStateLoading=props.initialStateLoading||umiAppContext.initialStateLoading
     umiAppContext.initialStateError=props.initialStateError||umiAppContext.initialStateError
     umiAppContext.loading=props.loading||umiAppContext.loading

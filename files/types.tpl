@@ -32,12 +32,13 @@ export interface IUmiConfig{
     //默认 {}
     request?:RequestConfig
     //初始化状态
-    getInitialState?:()=>Promise<any>
+    getInitialState?:Function
+    //跳过权限处理,自己手动处理权限
+    skipAccess?:boolean
     //权限设置
     access:(initialState?:Record<string, any>)=>Record<string, any>
     //默认 []
     routes?:IRoute[]
-
 }
 
 export interface IAppData{

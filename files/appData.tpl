@@ -2,7 +2,7 @@ import {IUmiConfig, IAppData, defineUmi, IRoute} from './types'
 import umiConfig from "./umiConfig";
 import {RouteObject} from "react-router-dom";
 import {Result} from "antd";
-import React, {ReactElement, useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useAccess} from "./access";
 import {UmiAppContext} from "./UmiAppContext";
 
@@ -42,24 +42,57 @@ function setDefaultUmiConfig(umiConfig:IUmiConfig):IUmiConfig{
 }
 
 function WrapRoute(props:any){
+    //不知道为啥会多渲染几次
+    if(props.children.type==WrapRoute){
+        return props.children
+    }
     const umiAppContext = useContext(UmiAppContext);
     const access=useAccess()
-    if(props.access){
-        if(typeof props.access=='string'){
-            if(access[props.access]!=true){
-                return umiAppContext.noAccess
-            }
-        }else if((typeof props.access=="object")&&props.access.length>0){
-            for (const acc of props.access) {
+    if(!useAppData().umiConfig.skipAccess){
+        if(props.access){
+            if(typeof props.access=='string'){
                 if(access[props.access]!=true){
                     return umiAppContext.noAccess
+                }
+            }else if((typeof props.access=="object")&&props.access.length>0){
+                for (const acc of props.access) {
+                    if(access[props.access]!=true){
+                        return umiAppContext.noAccess
+                    }
                 }
             }
         }
     }
+
+    const [initialProps, setInitialProps] = useState<Record<string, any>|undefined>(undefined);
+    useEffect(() => {
+        (async () => {
+            if (props.children.type.getInitialProps&&typeof props.children.type.getInitialProps=="function") {
+                if(Object.prototype.toString.call(props.children.type.getInitialProps).includes("AsyncFunction")){
+                    setInitialProps(await props.children.type.getInitialProps())
+                }else{
+                    setInitialProps(props.children.type.getInitialProps())
+                }
+            }else{
+                setInitialProps({})
+            }
+        })()
+    }, [props]);
+
+
+    if(initialProps==undefined&&umiAppContext.initialPropsSync){
+        return umiAppContext.initialStateLoading
+    }
+    const elProps={
+        ...props,
+    }
+
     return (
         <>
-            {props.children}
+            {React.createElement(props.children.type,{
+                ...elProps,
+                ...initialProps,
+            })}
         </>
     )
 }

@@ -78,8 +78,10 @@ export interface IUmiConfig{
     basename?:string
     //默认 {}
     request?:RequestConfig
-    //初始化状态
-    getInitialState?:()=>Promise<any>
+    //初始化状态,支持函数或异步函数
+    getInitialState?:Function
+    //跳过权限处理,自己手动处理权限
+    skipAccess?:boolean
     //权限设置
     access:(initialState?:Record<string, any>)=>Record<string, any>
     //默认 []
