@@ -31,6 +31,7 @@ const path_1 = __importDefault(require("path"));
 const vite_1 = require("vite");
 const pkginfo_1 = __importDefault(require("pkginfo"));
 const esModuleLexer = __importStar(require("es-module-lexer"));
+const esbuild_1 = __importDefault(require("esbuild"));
 const fs = __importStar(require("fs"));
 const template_1 = require("./template");
 class AppData {
@@ -57,10 +58,14 @@ class AppData {
             template_1.template.renderToProjectUmiFile("umiConfig", ".tsx");
             template_1.template.renderToProjectUmiFile("request");
             template_1.template.renderToProjectUmiFile("history");
-            template_1.template.renderToProjectUmiFile("UmiApp", ".tsx");
-            template_1.template.renderToProjectUmiFile("model", ".tsx");
-            template_1.template.renderToProjectUmiFile("modelRuntime", ".tsx");
             template_1.template.renderToProjectUmiFile("models/@@initialState", ".tsx");
+            template_1.template.renderToProjectUmiFile("model/index", ".tsx");
+            template_1.template.renderToProjectUmiFile("model/runtime", ".tsx");
+            template_1.template.renderToProjectUmiFile("access/context");
+            template_1.template.renderToProjectUmiFile("access/index");
+            template_1.template.renderToProjectUmiFile("access/runtime", ".tsx");
+            template_1.template.renderToProjectUmiFile("UmiAppContext", ".tsx");
+            template_1.template.renderToProjectUmiFile("UmiApp", ".tsx");
             template_1.template.renderToProjectUmiFile("index");
             console.log(`  ${AppData.pluginName} complete`);
         }
@@ -71,7 +76,7 @@ class AppData {
     static async loadUmiConfig() {
         await esModuleLexer.init.then(() => {
             let umiConfig = fs.readFileSync(path_1.default.join(this.projectDir, "umiConfig.tsx"), { encoding: 'utf-8', flag: 'r' });
-            const [imports, _] = esModuleLexer.parse(umiConfig);
+            const [imports, _] = esModuleLexer.parse(esbuild_1.default.transformSync(umiConfig, { loader: 'jsx' }).code);
             imports.map((item) => {
                 if (item.n.startsWith("./")) {
                     const fixPath = item.n.replace(RegExp("./"), "../../");

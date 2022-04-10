@@ -24,7 +24,7 @@ import {
     PaginatedParams,
     PaginatedResult,
 } from '@ahooksjs/use-request/es/types';
-import {AppData} from "../../src/<%=AppData.pluginOptions.tempDir%>/appData";
+import {useAppData} from "../../src/<%=AppData.pluginOptions.tempDir%>/appData";
 
 
 
@@ -196,7 +196,7 @@ let requestInstance: AxiosInstance;
 let config: RequestConfig;
 const getConfig = (): RequestConfig => {
     if (config) return config;
-    config=AppData.umiConfig.request
+    config=useAppData().umiConfig.request
     return config;
 };
 const getRequestInstance = (): AxiosInstance => {

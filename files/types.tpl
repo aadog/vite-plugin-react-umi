@@ -8,12 +8,20 @@ export interface AntdOptions{
     pro?:boolean
 }
 export interface IRoute{
-    //区分大小写
+    //是否区分大小写
     caseSensitive?: boolean;
     children?: IRoute[];
     index?: boolean;
     path?: string;
-    element?: React.ReactNode;
+    element?: React.ReactElement|string;
+    //权限
+    access?: string|string[]
+    //元数据
+    meta?:{
+        //标题
+        title?: string
+        [name:string]:any
+    }
     [name:string]:any
 }
 export interface IUmiConfig{
@@ -25,6 +33,8 @@ export interface IUmiConfig{
     request?:RequestConfig
     //初始化状态
     getInitialState?:()=>Promise<any>
+    //权限设置
+    access:(initialState?:Record<string, any>)=>Record<string, any>
     //默认 []
     routes?:IRoute[]
 
@@ -36,6 +46,8 @@ export interface IAppData{
     projectName:string
     umiConfig:IUmiConfig
 }
+
+
 
 export function defineUmi(config:IUmiConfig):IUmiConfig{
     return config

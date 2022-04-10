@@ -1,7 +1,5 @@
 import React from "react";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
-export interface IRequestOptions {
-}
 export interface IAntdOptions {
     style?: ("css" | "less");
     pro?: boolean;
@@ -11,7 +9,12 @@ export interface IRoute {
     children?: IRoute[];
     index?: boolean;
     path?: string;
-    element?: React.ReactNode;
+    element?: React.ReactElement | string;
+    access?: string | string[];
+    meta?: {
+        title?: string;
+        [name: string]: any;
+    };
     [name: string]: any;
 }
 export interface IPluginOptions {
@@ -66,5 +69,6 @@ export interface IUmiConfig {
     basename?: string;
     request?: RequestConfig;
     getInitialState?: () => Promise<any>;
+    access: (initialState?: Record<string, any>) => Record<string, any>;
     routes?: IRoute[];
 }

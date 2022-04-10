@@ -3,6 +3,7 @@ import path from "path";
 import {PackageData, resolvePackageData, transformWithEsbuild} from "vite";
 import pkgInfo from "pkginfo";
 import * as esModuleLexer from "es-module-lexer";
+import esbuild from 'esbuild'
 import * as fs from "fs";
 import {template} from "./template";
 
@@ -35,10 +36,14 @@ export class AppData {
             template.renderToProjectUmiFile("umiConfig", ".tsx",)
             template.renderToProjectUmiFile("request")
             template.renderToProjectUmiFile("history")
-            template.renderToProjectUmiFile("UmiApp", ".tsx")
-            template.renderToProjectUmiFile("model",".tsx")
-            template.renderToProjectUmiFile("modelRuntime",".tsx")
             template.renderToProjectUmiFile("models/@@initialState",".tsx")
+            template.renderToProjectUmiFile("model/index",".tsx")
+            template.renderToProjectUmiFile("model/runtime",".tsx")
+            template.renderToProjectUmiFile("access/context")
+            template.renderToProjectUmiFile("access/index")
+            template.renderToProjectUmiFile("access/runtime",".tsx")
+            template.renderToProjectUmiFile("UmiAppContext", ".tsx")
+            template.renderToProjectUmiFile("UmiApp", ".tsx")
             template.renderToProjectUmiFile("index")
             console.log(`  ${AppData.pluginName} complete`)
         } catch (err) {
@@ -49,7 +54,7 @@ export class AppData {
     static async loadUmiConfig() {
         await esModuleLexer.init.then(() => {
             let umiConfig = fs.readFileSync(path.join(this.projectDir, "umiConfig.tsx"), {encoding: 'utf-8', flag: 'r'})
-            const [imports, _] = esModuleLexer.parse(umiConfig)
+            const [imports, _] = esModuleLexer.parse(esbuild.transformSync(umiConfig,{loader:'jsx'}).code)
             imports.map((item) => {
                 if (item.n.startsWith("./")) {
                     const fixPath = item.n.replace(RegExp("./",), "../../")

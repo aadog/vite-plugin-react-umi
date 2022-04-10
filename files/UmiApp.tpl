@@ -5,66 +5,80 @@ import {
     BrowserRouter,
     useRoutes,
 } from "react-router-dom";
-import {AppData, UmiConfigToRouteObject} from "./appData";
+import {useAppData, transformRoutes} from "./appData";
 import {Result, Spin} from "antd";
-import {ModelProviderWrapper} from './modelRuntime'
+import {ModelProviderWrapper} from './model/runtime'
 import {useModel} from "./model";
+import {Provider as AccessProvider} from './access/runtime'
+import {UmiAppContext} from "./UmiAppContext";
 
 type RenderElementProps={
-    fallback: React.ReactElement;
-    notfound: React.ReactElement|null;
+
 }
 const RenderElement: React.FC<RenderElementProps> = (props) => {
-    const routePage = useRoutes(UmiConfigToRouteObject(AppData.umiConfig))
+    const umiAppContext = React.useContext(UmiAppContext);
+    const routePage = useRoutes(transformRoutes(useAppData().umiConfig))
     if(!routePage){
-        return props.notfound
+        return umiAppContext.notfound
     }
-    const element=React.createElement(routePage.type,{
-        ...routePage.props,
-    })
     return (
-        <React.Suspense fallback={props.fallback}>
-            {element}
-        </React.Suspense>
+        <>
+            <React.Suspense fallback={umiAppContext.loading}>
+                {routePage}
+            </React.Suspense>
+        </>
     )
 }
 
+export const InitialStateError:React.FC<any> = (props) => {
+    const initialStateModel=useModel("@@initialState")
+    return <Result status={'error'} extra={`App初始化失败:${initialStateModel.error}`}/>
+}
+
 type UmiAppProps = {
-    fallback?: React.ReactElement|null;
+    loading?: React.ReactElement|null;
     notfound?: React.ReactElement|null;
-    initLoading?: React.ReactElement|null;
-    initError?: React.ReactElement|null;
+    initialStateLoading?: React.ReactElement|null;
+    initialStateError?: React.ReactElement|null;
+    initialStateSync?: boolean
+    noAccess?:React.ReactElement
 }
 export const UmiApp: React.FC<UmiAppProps> = (props) => {
-    const fallback=props.fallback||<Spin size={"large"} tip={<div style={ {marginTop:10} }>加载中...</div>} style={ {width:"100%",height:"100%",top:"30%",position:'absolute'} }/>
-    const notfound=props.notfound||<Result status="404" extra={"找不到页面"}/>
-    const initLoading=props.initLoading||<Spin size={"large"} tip={<div style={ {marginTop:10} }>系统正在初始化...</div>} style={ {width:"100%",height:"100%",top:"30%",position:'absolute'} }/>
-    const initError=props.initError||<Result status={'error'} extra={"App初始化失败"}/>
-
+    const umiAppContext = React.useContext(UmiAppContext);
+    umiAppContext.initialStateSync=props.initialStateSync==false||umiAppContext.initialStateSync
+    umiAppContext.initialStateLoading=props.initialStateLoading||umiAppContext.initialStateLoading
+    umiAppContext.initialStateError=props.initialStateError||umiAppContext.initialStateError
+    umiAppContext.loading=props.loading||umiAppContext.loading
+    umiAppContext.notfound=props.loading||umiAppContext.notfound
     return (
-        <ModelProviderWrapper>
-            <UmiAppEntry fallback={fallback} notfound={notfound} initLoading={initLoading} initError={initError} />
-        </ModelProviderWrapper>
+        <UmiAppContext.Provider value={umiAppContext}>
+            <ModelProviderWrapper>
+                <AccessProvider>
+                    <UmiAppEntry />
+                </AccessProvider>
+            </ModelProviderWrapper>
+        </UmiAppContext.Provider>
     )
 }
 
 type UmiAppEntryProps = {
-    fallback: React.ReactElement;
-    notfound: React.ReactElement;
-    initLoading: React.ReactElement;
-    initError: React.ReactElement;
+
 }
 export const UmiAppEntry: React.FC<UmiAppEntryProps> = (props) => {
-    const initialStateModel=useModel("@@initialState")
-    if(initialStateModel.loading){
-        return props.initLoading
+    const umiAppContext = React.useContext(UmiAppContext);
+    if(umiAppContext.initialStateSync){
+        const initialStateModel=useModel("@@initialState")
+        if(initialStateModel.loading){
+            return umiAppContext.initialStateLoading
+        }
+        if(initialStateModel.error){
+            return umiAppContext.initialStateError
+        }
     }
-    if(initialStateModel.error){
-        return props.initError
-    }
+
     return (
-        <DynamicRouter type={AppData.umiConfig.type} basename={AppData.umiConfig.basename}>
-            <RenderElement fallback={props.fallback} notfound={props.notfound}/>
+        <DynamicRouter type={useAppData().umiConfig.type} basename={useAppData().umiConfig.basename}>
+            <RenderElement />
         </DynamicRouter>
     )
 }
