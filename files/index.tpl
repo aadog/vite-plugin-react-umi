@@ -5,3 +5,4 @@ export {UmiApp} from './UmiApp'
 export {useModel} from './model'
 export {useAccess,Access,useAccessMarkedRoutes} from './access'
 export {Helmet} from 'react-helmet';
+export {moment} from 'moment'
