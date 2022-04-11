@@ -41,7 +41,7 @@ export default function umi(pluginOptions: IPluginOptions): Plugin {
         },
 
         handleHotUpdate(ctx: HmrContext) {
-            if(path.basename(ctx.file)=='umiConfig.tsx'&&path.basename(path.dirname(ctx.file)).toLowerCase()==AppData.projectName){
+            if(path.basename(ctx.file)=='umiConfig.tsx'&&path.basename(path.dirname(ctx.file)).toLowerCase()==AppData.projectName.toLowerCase()){
                 AppData.generateFiles()
             }
         }
