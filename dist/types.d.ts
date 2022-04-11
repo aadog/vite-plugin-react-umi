@@ -10,6 +10,8 @@ export interface IRoute {
     index?: boolean;
     path?: string;
     element?: React.ReactElement | string;
+    getInitialPropsSync?: boolean | undefined;
+    redirect?: string;
     access?: string | string[];
     meta?: {
         title?: string;

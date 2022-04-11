@@ -58,10 +58,10 @@ export class AppData {
             imports.map((item) => {
                 if (item.n.startsWith("./")) {
                     const fixPath = item.n.replace(RegExp("./",), "../../")
-                    umiConfig = umiConfig.replace(RegExp(item.n, "g"), fixPath)
+                    umiConfig = umiConfig.replace(RegExp(item.n ), fixPath)
                 } else if (item.n.includes(this.pluginName)) {
                     const fixPath = item.n.replace(RegExp(`${this.pluginName}`, "g"), "./types")
-                    umiConfig = umiConfig.replace(RegExp(item.n, "g"), fixPath)
+                    umiConfig = umiConfig.replace(RegExp(item.n), fixPath)
                 }
             })
             this.umiConfig = umiConfig

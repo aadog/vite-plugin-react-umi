@@ -1,6 +1,6 @@
 import {
     HmrContext,
-    mergeConfig, ModuleNode,
+    mergeConfig,
     Plugin,
     UserConfig
 } from "vite";
@@ -40,8 +40,8 @@ export default function umi(pluginOptions: IPluginOptions): Plugin {
              AppData.generateFiles()
         },
 
-        handleHotUpdate(ctx: HmrContext): Array<ModuleNode> | void | Promise<Array<ModuleNode> | void> {
-            if(path.basename(ctx.file)=='umiConfig.tsx'&&path.basename(path.dirname(ctx.file))==AppData.projectName){
+        handleHotUpdate(ctx: HmrContext) {
+            if(path.basename(ctx.file)=='umiConfig.tsx'&&path.basename(path.dirname(ctx.file)).toLowerCase()==AppData.projectName){
                 AppData.generateFiles()
             }
         }

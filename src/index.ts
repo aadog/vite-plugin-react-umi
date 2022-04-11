@@ -2,6 +2,7 @@ import {Plugin} from "vite";
 import umi from "./umi";
 import {AppData} from "./appdata";
 import {IPluginOptions, IUmiConfig} from "./types";
+import {AntdResolve, createStyleImportPlugin} from "vite-plugin-style-import";
 
 export function defineUmi(umiConfig:IUmiConfig):IUmiConfig{
     return umiConfig
@@ -35,6 +36,14 @@ export function createUmi(options?:IPluginOptions): Plugin[] {
 }
 function usePlugins(options: IPluginOptions):Plugin[]{
     const plugins:Plugin[]=[]
+    if(!AppData.pluginOptions.antd){
+        plugins.push(createStyleImportPlugin({
+            resolves:[
+                AntdResolve(),
+            ]
+        }))
+    }
+
     return plugins
 }
 

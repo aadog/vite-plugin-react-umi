@@ -8,7 +8,12 @@ import {useAppData} from '../appData'
 
 export function Provider(props) {
     const { initialState } = useModel('@@initialState');
-    const access = React.useMemo(() => useAppData().umiConfig.access(initialState), [initialState]);
+    const access = React.useMemo(() => {
+        if (typeof useAppData().umiConfig.access=="function") {
+            return useAppData().umiConfig.access(initialState)
+        }
+        return useAppData().umiConfig.access
+    }, [initialState]);
     return (
         <AccessContext.Provider value={access}>
             { props.children }

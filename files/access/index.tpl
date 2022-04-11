@@ -5,8 +5,8 @@ import React from 'react';
 import { AccessContext } from './context';
 import type { IRoute } from 'umi';
 
-export const useAccess = () => {
-    return React.useContext(AccessContext);
+export function useAccess<T=Record<string, any>>(){
+    return React.useContext<T>(AccessContext);
 };
 
 export interface AccessProps {

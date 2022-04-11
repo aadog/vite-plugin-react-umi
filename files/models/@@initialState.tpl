@@ -16,12 +16,17 @@ export default () => {
         setState((s) => ({ ...s, loading: true, error: undefined }));
         try {
             let ret:any
-            if(Object.prototype.toString.call(useAppData().umiConfig.getInitialState).includes("AsyncFunction")){
-                ret = await useAppData().umiConfig.getInitialState();
-                console.log(ret)
+            if (useAppData().umiConfig.getInitialState&&typeof useAppData().umiConfig.getInitialState=="function") {
+                const initialState=useAppData().umiConfig.getInitialState()
+                if(initialState instanceof Promise){
+                    ret=await initialState
+                }else{
+                    ret=initialState
+                }
             }else{
-                ret = useAppData().umiConfig.getInitialState();
+                setInitialProps(useAppData().umiConfig.getInitialState)
             }
+            setState((s) => ({ ...s, initialState: ret, loading: false }));
             setState((s) => ({ ...s, initialState: ret, loading: false }));
         } catch (e) {
             setState((s) => ({ ...s, error: e, loading: false }));

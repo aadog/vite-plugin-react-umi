@@ -49,7 +49,12 @@ class Antd {
             const cssLines = importLine
                 .match(/\w+/g)
                 .slice(1, -2)
-                .map(name => `import "antd/lib/${transformToKebabCase(name)}/style/index.${appdata_1.AppData.pluginOptions.antd.style}";`)
+                .map(name => {
+                if (name == "Row" || name == "Col") {
+                    return ``;
+                }
+                return `import "antd/es/${transformToKebabCase(name)}/style/index.${appdata_1.AppData.pluginOptions.antd.style}";`;
+            })
                 .join('\n');
             return code.replace(ANTD_IMPORT_LINE_REG, `${importLine}\n${cssLines}`);
         }

@@ -13,6 +13,10 @@ export interface IRoute{
     index?: boolean;
     path?: string;
     element?: React.ReactElement|string;
+    //同步,默认true
+    getInitialPropsSync?:boolean|undefined
+    //要跳转的地址
+    redirect?: string
     //权限
     access?: string|string[]
     //元数据

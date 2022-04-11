@@ -20,6 +20,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createUmi = exports.defineUmi = void 0;
 const umi_1 = __importDefault(require("./umi"));
 const appdata_1 = require("./appdata");
+const vite_plugin_style_import_1 = require("vite-plugin-style-import");
 function defineUmi(umiConfig) {
     return umiConfig;
 }
@@ -48,6 +49,13 @@ function createUmi(options) {
 exports.createUmi = createUmi;
 function usePlugins(options) {
     const plugins = [];
+    if (!appdata_1.AppData.pluginOptions.antd) {
+        plugins.push((0, vite_plugin_style_import_1.createStyleImportPlugin)({
+            resolves: [
+                (0, vite_plugin_style_import_1.AntdResolve)(),
+            ]
+        }));
+    }
     return plugins;
 }
 __exportStar(require("./types"), exports);

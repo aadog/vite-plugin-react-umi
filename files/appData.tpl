@@ -1,6 +1,6 @@
 import {IUmiConfig, IAppData, defineUmi, IRoute} from './types'
 import umiConfig from "./umiConfig";
-import {RouteObject} from "react-router-dom";
+import {RouteObject,Navigate} from "react-router-dom";
 import {Result} from "antd";
 import React, {useContext, useEffect, useState} from "react";
 import {useAccess} from "./access";
@@ -43,68 +43,112 @@ function setDefaultUmiConfig(umiConfig:IUmiConfig):IUmiConfig{
     })
 }
 
-function WrapRoute(props:any){
-    //不知道为啥会多渲染几次
-    if(props.children.type==WrapRoute){
-        return props.children
+type WrapRouteProps={
+    //是否区分大小写
+    caseSensitive?: boolean;
+    index?: boolean;
+    path?: string;
+    element?: React.ReactElement|string;
+    //同步,默认true
+    getInitialPropsSync?:boolean|undefined
+    //权限
+    access?: string|string[]
+    //元数据
+    meta?:{
+        //标题
+        title?: string
+        [name:string]:any
     }
+    [name:string]:any
+}
+// @ts-ignore
+const WrapRoute: React.FC<WrapRouteProps> = (props) => {
     const umiAppContext = useContext(UmiAppContext);
-    const access=useAccess()
-    if(!useAppData().umiConfig.skipAccess){
-        if(props.access){
-            if(typeof props.access=='string'){
-                if(access[props.access]!=true){
+    const access = useAccess()
+    if (access && props.access && !useAppData().umiConfig.skipAccess) {
+        if (typeof props.access == 'string') {
+            if (access[props.access as string] != true) {
+                return umiAppContext.noAccess
+            }
+        } else if ((typeof props.access == "object") && props.access.length > 0) {
+            for (const a of props.access) {
+                if (access[a] != true) {
                     return umiAppContext.noAccess
-                }
-            }else if((typeof props.access=="object")&&props.access.length>0){
-                for (const acc of props.access) {
-                    if(access[props.access]!=true){
-                        return umiAppContext.noAccess
-                    }
                 }
             }
         }
     }
+    if (!React.isValidElement(props.element)) {
+        return props.element||null
+    }
+    const [initialProps, setInitialProps] = useState<Record<string, any> | undefined>(undefined);
 
-    const [initialProps, setInitialProps] = useState<Record<string, any>|undefined>(undefined);
+    // @ts-ignore
+    const isLazy = props.element?.type?.$$typeof?.toString().includes("react.lazy")
     useEffect(() => {
         (async () => {
-            if (props.children.type.getInitialProps&&typeof props.children.type.getInitialProps=="function") {
-                if(Object.prototype.toString.call(props.children.type.getInitialProps).includes("AsyncFunction")){
-                    setInitialProps(await props.children.type.getInitialProps())
+            let getinitialProps: Function | undefined
+            if (isLazy) {
+                // @ts-ignore
+                const result=(await props.element?.type?._payload?._result)
+                if(typeof result=="function"){
+                    getinitialProps=(await result())?.default?.getInitialProps
                 }else{
-                    setInitialProps(props.children.type.getInitialProps())
+                    // @ts-ignore
+                    getinitialProps = result?.default?.getInitialProps
                 }
-            }else{
+            } else {
+                // @ts-ignore
+                getinitialProps = props.element?.type?.getInitialProps
+            }
+            if (getinitialProps && typeof getinitialProps == "function") {
+                const initialProps = getinitialProps()
+                if (initialProps instanceof Promise) {
+                    setInitialProps(await initialProps)
+                } else {
+                    setInitialProps(initialProps)
+                }
+            } else {
                 setInitialProps({})
             }
         })()
-    }, [props]);
+    }, []);
 
-
-    if(initialProps==undefined&&umiAppContext.initialPropsSync){
-        return umiAppContext.initialStateLoading
-    }
-    const elProps={
-        ...props.children.props,
+    if(initialProps==undefined){
+        let getInitialPropsSync=props.getInitialPropsSync
+        if(getInitialPropsSync==undefined){
+            getInitialPropsSync=umiAppContext.initialPropsSync
+        }
+        if(getInitialPropsSync==true){
+            return umiAppContext.loading
+        }
     }
 
     return (
         <>
-            {React.createElement(props.children.type,{
-                ...elProps,
+            {React.createElement(props.element.type,{
+                ...props,
                 ...initialProps,
+                initialedProps:initialProps!=undefined,
             })}
         </>
     )
 }
 function transformRoute(route:IRoute){
-    let element=route.element
-    route.element = (
-        <WrapRoute access={route.access} meta={route.meta}>
-            {element}
-        </WrapRoute>
-    )
+    if(route.redirect){
+        route.element=<Navigate to={route.redirect}></Navigate>
+    }else if(route.element){
+        // @ts-ignore
+        route.access=route.element.access||route.access
+        // @ts-ignore
+        route.meta=route.element.meta||route.meta
+        route.getInitialPropsSync=route.getInitialPropsSync
+        route.element = (
+            <WrapRoute {...route}>
+                {route.element}
+            </WrapRoute>
+        )
+    }
     if(route.children){
         for (let i = 0; i < route.children.length; i++) {
             transformRoute(route.children[i])
