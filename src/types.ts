@@ -12,7 +12,7 @@ export interface IRoute{
     children?: IRoute[];
     index?: boolean;
     path?: string;
-    element?: React.ReactElement|string;
+    element?: React.ReactElement|string|Function;
     //同步,默认true
     getInitialPropsSync?:boolean|undefined
     //要跳转的地址

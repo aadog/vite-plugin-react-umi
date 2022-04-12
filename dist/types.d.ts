@@ -9,7 +9,7 @@ export interface IRoute {
     children?: IRoute[];
     index?: boolean;
     path?: string;
-    element?: React.ReactElement | string;
+    element?: React.ReactElement | string | Function;
     getInitialPropsSync?: boolean | undefined;
     redirect?: string;
     access?: string | string[];

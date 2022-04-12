@@ -17,7 +17,7 @@ type RenderElementProps={
 }
 const RenderElement: React.FC<RenderElementProps> = (props) => {
     const umiAppContext = React.useContext(UmiAppContext);
-    const routePage = useRoutes(transformRoutes(useAppData().umiConfig))
+    const routePage = useRoutes(umiAppContext.routes||[])
     if(!routePage){
         return umiAppContext.notfound
     }
@@ -52,6 +52,7 @@ export const UmiApp: React.FC<UmiAppProps> = (props) => {
     umiAppContext.initialStateError=props.initialStateError||umiAppContext.initialStateError
     umiAppContext.loading=props.loading||umiAppContext.loading
     umiAppContext.notfound=props.loading||umiAppContext.notfound
+    umiAppContext.routes=transformRoutes(useAppData().umiConfig)
     return (
         <UmiAppContext.Provider value={umiAppContext}>
             <ModelProviderWrapper>

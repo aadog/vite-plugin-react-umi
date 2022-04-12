@@ -4,7 +4,7 @@ import {RouteObject,Navigate} from "react-router-dom";
 import {Result} from "antd";
 import React, {useContext, useEffect, useState} from "react";
 import {useAccess} from "./access";
-import {UmiAppContext} from "./UmiAppContext";
+import {IUmiAppContext, UmiAppContext} from "./UmiAppContext";
 
 //appdata
 export function useAppData():IAppData{
@@ -48,7 +48,7 @@ type WrapRouteProps={
     caseSensitive?: boolean;
     index?: boolean;
     path?: string;
-    element?: React.ReactElement|string;
+    element?: React.ReactElement|string|Function;
     //同步,默认true
     getInitialPropsSync?:boolean|undefined
     //权限
@@ -61,78 +61,221 @@ type WrapRouteProps={
     }
     [name:string]:any
 }
-// @ts-ignore
-const WrapRoute: React.FC<WrapRouteProps> = (props) => {
-    const umiAppContext = useContext(UmiAppContext);
-    const access = useAccess()
-    if (access && props.access && !useAppData().umiConfig.skipAccess) {
-        if (typeof props.access == 'string') {
-            if (access[props.access as string] != true) {
-                return umiAppContext.noAccess
-            }
-        } else if ((typeof props.access == "object") && props.access.length > 0) {
-            for (const a of props.access) {
-                if (access[a] != true) {
-                    return umiAppContext.noAccess
-                }
-            }
+
+const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUmiAppContext) => {
+    let struct: {
+        access?: string[]
+        element: React.ReactElement | string
+        isValidElement: boolean
+        isElementType:boolean
+        //同步,默认true
+        getInitialPropsSync?: boolean | undefined
+        getInitialProps?:Function|object
+        meta: {
+            //标题
+            title?: string
+            [name: string]: any
         }
+    } = {
+        access:[],
+        isValidElement: false,
+        element: "",
+        meta: {},
+        isElementType:false,
     }
-    if (!React.isValidElement(props.element)) {
-        return props.element||null
+    //如果不是组件
+    if (typeof props.element == "string") {
+        struct.isValidElement = false
+        struct.element = props.element as string
+        if (typeof props.access == "string") {
+            struct.access?.push(props.access)
+        } else if (typeof props.access == "object" && props.access.length > 0) {
+            struct.access?.push(...props.access)
+        }
+        struct.getInitialPropsSync = props.getInitialPropsSync
+        if (struct.getInitialPropsSync == undefined) {
+            struct.getInitialPropsSync = umiAppContext.initialPropsSync
+        }
+        struct.meta = {
+            ...props.meta
+        }
+        return struct
     }
-    const [initialProps, setInitialProps] = useState<Record<string, any> | undefined>(undefined);
+    if (typeof props.element == "function") {
+        //组件类型
+        struct.isValidElement = true
+        struct.element = React.createElement(props.element as React.FC)
+        struct.isElementType=true
+    }
 
     // @ts-ignore
-    const isLazy = props.element?.type?.$$typeof?.toString().includes("react.lazy")
-    useEffect(() => {
-        (async () => {
-            let getinitialProps: Function | undefined
-            if (isLazy) {
-                // @ts-ignore
-                const result=(await props.element?.type?._payload?._result)
-                if(typeof result=="function"){
-                    getinitialProps=(await result())?.default?.getInitialProps
-                }else{
-                    // @ts-ignore
-                    getinitialProps = result?.default?.getInitialProps
-                }
-            } else {
-                // @ts-ignore
-                getinitialProps = props.element?.type?.getInitialProps
-            }
-            if (getinitialProps && typeof getinitialProps == "function") {
-                const initialProps = getinitialProps()
-                if (initialProps instanceof Promise) {
-                    setInitialProps(await initialProps)
-                } else {
-                    setInitialProps(initialProps)
-                }
-            } else {
-                setInitialProps({})
-            }
-        })()
-    }, []);
-
-    if(initialProps==undefined){
-        let getInitialPropsSync=props.getInitialPropsSync
-        if(getInitialPropsSync==undefined){
-            getInitialPropsSync=umiAppContext.initialPropsSync
+    if (props.element._payload?._status) {//是lazy组件类型
+        console.log("lazy异步组件类型")
+        struct.isElementType=true
+        const el=React.createElement(props.element as React.ElementType)
+        // @ts-ignore
+        if (el.type._payload?._status == -1) {
+            // @ts-ignore
+            const load=(await (await el.type._payload?._result)()).default
+            struct.element=load
+            struct.isValidElement=true
+            // @ts-ignore
+        }else if(el.type._payload?._status==1){
+            // @ts-ignore
+            const load=(await el.type._payload?._result)
+            struct.element=load
+            struct.isValidElement=true
         }
-        if(getInitialPropsSync==true){
-            return umiAppContext.loading
+        // @ts-ignore
+    }else if (props.element?.type?._payload?._status != undefined) {  //是lazy组件
+        console.log("lazy异步组件")
+        const el=props.element
+        // @ts-ignore
+        if (el.type._payload?._status == -1) {
+            // @ts-ignore
+            const load=(await (await el.type._payload?._result)()).default
+            struct.element=load
+            struct.isValidElement=true
+            // @ts-ignore
+        }else if(el.type._payload?._status==1){
+            // @ts-ignore
+            const load=(await el.type._payload?._result)
+            struct.element=load
+            struct.isValidElement=true
         }
+    }else{
+        struct.element=props.element as React.ReactElement
+        struct.isValidElement=true
+    }
+    if(!struct.element){
+        throw Error(`路由解析element失败,path:${props.path}`)
     }
 
-    return (
-        <>
-            {React.createElement(props.element.type,{
-                ...props,
-                ...initialProps,
-                initialedProps:initialProps!=undefined,
-            })}
-        </>
-    )
+    if (typeof props?.access == "string") {
+        struct.access?.push(props.access)
+    } else if (typeof props.access == "object" && props.access.length > 0) {
+        struct.access?.push(...props.access)
+    }
+
+    // @ts-ignore
+    struct.getInitialPropsSync = props.getInitialProps
+    if (struct.getInitialPropsSync == undefined) {
+        struct.getInitialPropsSync = umiAppContext.initialPropsSync
+    }
+
+    struct.meta = {
+        // @ts-ignore
+        ...struct.element?.meta,
+        ...props.meta,
+
+    }
+
+    // @ts-ignore
+    struct.getInitialProps=struct.element?.type?.getInitialProps
+
+    return struct
+}
+// @ts-ignore
+const WrapRoute: React.FC<WrapRouteProps> = (props) => {
+   const umiAppContext = useContext(UmiAppContext);
+    const access = useAccess()
+    const [elState, setElState] = useState<{
+        access?: string[]
+        element: React.ReactElement | string
+        isValidElement: boolean
+        isElementType:boolean
+        //同步,默认true
+        getInitialPropsSync?: boolean | undefined
+        getInitialProps?:Function|object
+        meta: {
+            //标题
+            title?: string
+            [name: string]: any
+        }
+    }>();
+    const [authState, setAuthState] = useState<{
+        auth: boolean
+        allows?: string[]
+        forbid?: string
+    } | undefined>(undefined);
+    const [initialPropsState, setInitialPropsState] = useState<Record<string, any>|undefined>(undefined);
+
+
+    useEffect(() => {
+        (async () => {
+            const el = await getWrapRoutePropsElement(props, umiAppContext)
+            setElState(el)
+            if (access && el.access && !useAppData().umiConfig.skipAccess) {
+                const allows:string[] = []
+                let forbid = undefined
+                if (typeof el.access == 'string') {
+                    if (access[el.access as string] != true) {
+                        forbid = el.access
+                        setAuthState({auth:false,allows:allows,forbid:forbid})
+                        return
+                    }
+                    allows.push(el.access)
+                } else if ((typeof el.access == "object") && el.access.length!=undefined) {
+                    for (const a of el.access) {
+                        if (access[a] != true) {
+                            forbid = el.access
+                            return
+                        }
+                        allows.push(a)
+                    }
+                }
+                setAuthState({auth: true, allows: el.access,forbid:forbid})
+            } else {
+                console.log("aa")
+                setAuthState({auth: true, allows: el.access})
+            }
+            if(el.getInitialProps){
+                if(typeof el.getInitialProps=="function"){
+                    const result=el.getInitialProps()
+                    if(result instanceof Promise){
+                        setInitialPropsState(await result)
+                    }else{
+                        setInitialPropsState(result)
+                    }
+                }else{
+                    setInitialPropsState(el.getInitialProps)
+                }
+            }else{
+                setInitialPropsState({})
+            }
+        })()
+    }, [])
+
+
+
+    if (authState == undefined) {
+        return umiAppContext.loading
+    } else if (authState.auth == false) {
+        return React.cloneElement(umiAppContext.noAccess, authState)
+    }else if(!elState?.isValidElement){
+        return props.element
+    }else if(elState.getInitialPropsSync&&initialPropsState==undefined){
+        return umiAppContext.loading
+    }
+
+
+    const newProps={
+        access:elState.access,
+        ...initialPropsState,
+        path:props.path,
+        getInitialPropsSync:elState.getInitialPropsSync,
+        meta:elState.meta,
+        initialedProps:initialPropsState!=undefined,
+        auth:authState,
+    }
+    let el:React.ReactElement
+    if(elState.isElementType){
+        // @ts-ignore
+        el=React.createElement(props.element as React.FunctionComponent,{...newProps,})
+    }else{
+        el=React.cloneElement(props.element as React.ReactElement,newProps)
+    }
+    return el
 }
 function transformRoute(route:IRoute){
     if(route.redirect){
@@ -144,7 +287,7 @@ function transformRoute(route:IRoute){
         route.meta=route.element.meta||route.meta
         route.getInitialPropsSync=route.getInitialPropsSync
         route.element = (
-            <WrapRoute {...route}>
+            <WrapRoute {...route} key={route.path}>
                 {route.element}
             </WrapRoute>
         )

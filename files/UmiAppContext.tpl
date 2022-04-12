@@ -1,7 +1,7 @@
 import React from "react";
 import {Result, Spin} from "antd";
 import {useModel} from "./model";
-
+import {RouteObject} from "react-router-dom";
 
 export const InitialStateError:React.FC<any> = (props) => {
     const initialStateModel=useModel("@@initialState")
@@ -16,6 +16,7 @@ export interface IUmiAppContext{
     initialStateSync: boolean
     initialPropsSync: boolean
     noAccess:React.ReactElement
+    routes?:RouteObject[]
     [name:string]:any
 }
 export const UmiAppContext =React.createContext<IUmiAppContext>({

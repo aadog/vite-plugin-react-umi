@@ -13,7 +13,7 @@ export interface IRoute{
     children?: IRoute[];
     index?: boolean;
     path?: string;
-    element?: React.ReactElement|string;
+    element?: React.ReactElement|string|Function;
     //同步,默认true
     getInitialPropsSync?:boolean|undefined
     //要跳转的地址
@@ -60,12 +60,17 @@ export function defineUmi(config:IUmiConfig):IUmiConfig{
 
 export interface FunctionComponent<P = {
     path:string
-    access?:string|string[]
+    access:string[]
     getInitialPropsSync:boolean
     initialedProps:boolean
     meta:{
         title?:string
         [name:string]:any
+    },
+    auth:{
+        auth:boolean
+        allows:string[]
+        forbid?:string
     }
     [name:string]:any
 }> {
