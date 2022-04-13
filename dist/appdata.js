@@ -65,6 +65,7 @@ class AppData {
             template_1.template.renderToProjectUmiFile("access/index");
             template_1.template.renderToProjectUmiFile("access/runtime", ".tsx");
             template_1.template.renderToProjectUmiFile("UmiAppContext", ".tsx");
+            template_1.template.renderToProjectUmiFile("RouteContext", ".tsx");
             template_1.template.renderToProjectUmiFile("UmiApp", ".tsx");
             template_1.template.renderToProjectUmiFile("index");
             console.log(`  ${AppData.pluginName} complete`);

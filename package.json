@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-react-umi",
-  "version": "1.0.79",
-  "description": "umi改装,特别好用",
+  "version": "1.0.97",
+  "description": "基于umi4的改造,以vite原生插件形式使用",
   "main": "./dist/index.js",
   "scripts": {
     "dev": "tsc -w -p .",

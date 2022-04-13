@@ -1,5 +1,5 @@
 import { createHashHistory, createMemoryHistory, createBrowserHistory, History } from 'history';
-export { createSearchParams, Link, matchPath, matchRoutes, NavLink, Outlet, useLocation, useMatch, useNavigate, useOutlet, useParams, useResolvedPath, useRoutes, useSearchParams,BrowserRouter,Routes,Route} from 'react-router-dom';
+export {Navigate,createSearchParams, Link, matchPath, matchRoutes, NavLink, Outlet, useLocation, useMatch, useNavigate, useOutlet, useParams, useResolvedPath, useRoutes, useSearchParams,BrowserRouter,Routes,Route} from 'react-router-dom';
 import {useAppData} from "./appData";
 
 let history: History;

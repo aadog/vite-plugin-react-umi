@@ -12,12 +12,14 @@ export interface IRoute{
     caseSensitive?: boolean;
     children?: IRoute[];
     index?: boolean;
+    name?: string,
     path?: string;
     element?: React.ReactElement|string|Function;
     //同步,默认true
     getInitialPropsSync?:boolean|undefined
     //要跳转的地址
-        redirect?: string
+    redirect?: string
+    skipAccess?:boolean
     //权限
     access?: string|string[]
     //元数据
@@ -58,35 +60,36 @@ export function defineUmi(config:IUmiConfig):IUmiConfig{
     return config
 }
 
-export interface FunctionComponent<P = {
-    path:string
-    access:string[]
-    getInitialPropsSync:boolean
-    initialedProps:boolean
-    meta:{
+export type PropsWithUmi<P> = P & {
+    path?:string
+    access?:string[]
+    getInitialPropsSync?:boolean
+    initialedProps?:boolean
+    meta?:{
         title?:string
         [name:string]:any
     },
-    auth:{
+    auth?:{
         auth:boolean
         allows:string[]
         forbid?:string
     }
     [name:string]:any
-}> {
-    (props: P, context?: any): React.ReactElement<any, any> | null;
+};
+export interface FunctionComponent<P = {}> {
+    (props: PropsWithUmi<P>, context?: any): React.ReactElement<any, any> | null;
     propTypes?: React.WeakValidationMap<P> | undefined;
     contextTypes?: React.ValidationMap<any> | undefined;
     defaultProps?: Partial<P> | undefined;
     displayName?: string | undefined;
-    access?:string
+    access?:string|string[]
     //元数据
     meta?:{
         //标题
         title?: string
         [name:string]:any
     }
-    getInitialProps?:Function
+    getInitialProps?:Function|Record<string,any>
     [name:string]:any
 }
 

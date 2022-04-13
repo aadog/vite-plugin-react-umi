@@ -11,7 +11,15 @@ import {ModelProviderWrapper} from './model/runtime'
 import {useModel} from "./model";
 import {Provider as AccessProvider} from './access/runtime'
 import {UmiAppContext} from "./UmiAppContext";
+import { RouteContext } from "./RouteContext";
 
+
+function findFullRoute(routepage:React.ReactElement):React.ReactElement{
+    if(routepage.props.value.outlet==null){
+        return routepage.props.children
+    }
+    return findFullRoute(routepage.props.value.outlet)
+}
 type RenderElementProps={
 
 }
@@ -21,12 +29,16 @@ const RenderElement: React.FC<RenderElementProps> = (props) => {
     if(!routePage){
         return umiAppContext.notfound
     }
+    const fullRoute=findFullRoute(routePage)
+
+
+
     return (
-        <>
+        <RouteContext.Provider value={ {"route":fullRoute} }>
             <React.Suspense fallback={umiAppContext.loading}>
                 {routePage}
             </React.Suspense>
-        </>
+        </RouteContext.Provider>
     )
 }
 

@@ -43,6 +43,7 @@ export class AppData {
             template.renderToProjectUmiFile("access/index")
             template.renderToProjectUmiFile("access/runtime",".tsx")
             template.renderToProjectUmiFile("UmiAppContext", ".tsx")
+            template.renderToProjectUmiFile("RouteContext",".tsx")
             template.renderToProjectUmiFile("UmiApp", ".tsx")
             template.renderToProjectUmiFile("index")
             console.log(`  ${AppData.pluginName} complete`)

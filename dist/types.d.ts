@@ -8,10 +8,12 @@ export interface IRoute {
     caseSensitive?: boolean;
     children?: IRoute[];
     index?: boolean;
+    name?: string;
     path?: string;
     element?: React.ReactElement | string | Function;
     getInitialPropsSync?: boolean | undefined;
     redirect?: string;
+    skipAccess?: boolean;
     access?: string | string[];
     meta?: {
         title?: string;

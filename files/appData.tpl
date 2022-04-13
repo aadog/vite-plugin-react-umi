@@ -5,6 +5,7 @@ import {Result} from "antd";
 import React, {useContext, useEffect, useState} from "react";
 import {useAccess} from "./access";
 import {IUmiAppContext, UmiAppContext} from "./UmiAppContext";
+import {RouteContext} from "./RouteContext";
 
 //appdata
 export function useAppData():IAppData{
@@ -171,13 +172,20 @@ const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUm
     }
 
     // @ts-ignore
-    struct.getInitialProps=struct.element?.type?.getInitialProps
-
+    struct.getInitialProps=struct.element?.getInitialProps||struct.element?.type?.getInitialProps
+    // @ts-ignore
+    const access=struct.element?.access||struct.element?.type?.access||props?.access
+    if (typeof access == "string") {
+        struct.access?.push(access)
+    } else if (typeof access == "object" && access.length > 0) {
+        struct.access?.push(...access)
+    }
     return struct
 }
 // @ts-ignore
 const WrapRoute: React.FC<WrapRouteProps> = (props) => {
-   const umiAppContext = useContext(UmiAppContext);
+    const umiAppContext = useContext(UmiAppContext);
+    const routeContext = useContext(RouteContext);
     const access = useAccess()
     const [elState, setElState] = useState<{
         access?: string[]
@@ -205,7 +213,8 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
         (async () => {
             const el = await getWrapRoutePropsElement(props, umiAppContext)
             setElState(el)
-            if (access && el.access && !useAppData().umiConfig.skipAccess) {
+            // @ts-ignore
+            if (access && el.access && !useAppData().umiConfig.skipAccess&&routeContext.route?.props?.skipAccess!=true) {
                 const allows:string[] = []
                 let forbid = undefined
                 if (typeof el.access == 'string') {
@@ -219,6 +228,8 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
                     for (const a of el.access) {
                         if (access[a] != true) {
                             forbid = el.access
+                            forbid = a
+                            setAuthState({auth:false,allows:allows,forbid:forbid})
                             return
                         }
                         allows.push(a)
@@ -226,7 +237,6 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
                 }
                 setAuthState({auth: true, allows: el.access,forbid:forbid})
             } else {
-                console.log("aa")
                 setAuthState({auth: true, allows: el.access})
             }
             if(el.getInitialProps){
@@ -244,7 +254,8 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
                 setInitialPropsState({})
             }
         })()
-    }, [])
+        // @ts-ignore
+    }, [routeContext.route?.props?.skipAccess])
 
 
 

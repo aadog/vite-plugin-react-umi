@@ -11,12 +11,14 @@ export interface IRoute{
     caseSensitive?: boolean;
     children?: IRoute[];
     index?: boolean;
+    name?: string,
     path?: string;
     element?: React.ReactElement|string|Function;
     //同步,默认true
     getInitialPropsSync?:boolean|undefined
     //要跳转的地址
     redirect?: string
+    skipAccess?:boolean
     //权限
     access?: string|string[]
     //元数据
