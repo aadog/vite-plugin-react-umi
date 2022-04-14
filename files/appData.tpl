@@ -111,7 +111,7 @@ const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUm
 
     // @ts-ignore
     if (props.element._payload?._status) {//是lazy组件类型
-        console.log("lazy异步组件类型")
+       // console.log("lazy异步组件类型")
         struct.isElementType=true
         const el=React.createElement(props.element as React.ElementType)
         // @ts-ignore
@@ -129,7 +129,7 @@ const getWrapRoutePropsElement= async (props: WrapRouteProps, umiAppContext: IUm
         }
         // @ts-ignore
     }else if (props.element?.type?._payload?._status != undefined) {  //是lazy组件
-        console.log("lazy异步组件")
+      // console.log("lazy异步组件")
         const el=props.element
         // @ts-ignore
         if (el.type._payload?._status == -1) {
@@ -210,50 +210,82 @@ const WrapRoute: React.FC<WrapRouteProps> = (props) => {
 
 
     useEffect(() => {
-        (async () => {
-            const el = await getWrapRoutePropsElement(props, umiAppContext)
-            setElState(el)
+        let _isUnMound=false
+        getWrapRoutePropsElement(props, umiAppContext).then((el) => {
+            if (!_isUnMound) {
+                setElState(el)
+            }
+
             // @ts-ignore
-            if (access && el.access && !useAppData().umiConfig.skipAccess&&routeContext.route?.props?.skipAccess!=true) {
-                const allows:string[] = []
+            if (access && el.access && !useAppData().umiConfig.skipAccess && routeContext.route?.props?.skipAccess != true) {
+                const allows: string[] = []
                 let forbid = undefined
                 if (typeof el.access == 'string') {
                     if (access[el.access as string] != true) {
                         forbid = el.access
-                        setAuthState({auth:false,allows:allows,forbid:forbid})
+                        if (!_isUnMound) {
+                            setAuthState({auth: false, allows: allows, forbid: forbid})
+                        }
                         return
                     }
                     allows.push(el.access)
-                } else if ((typeof el.access == "object") && el.access.length!=undefined) {
+                } else if ((typeof el.access == "object") && el.access.length != undefined) {
                     for (const a of el.access) {
                         if (access[a] != true) {
                             forbid = el.access
                             forbid = a
-                            setAuthState({auth:false,allows:allows,forbid:forbid})
+                            if (!_isUnMound) {
+                                setAuthState({auth: false, allows: allows, forbid: forbid})
+                            }
                             return
                         }
                         allows.push(a)
                     }
                 }
-                setAuthState({auth: true, allows: el.access,forbid:forbid})
-            } else {
-                setAuthState({auth: true, allows: el.access})
-            }
-            if(el.getInitialProps){
-                if(typeof el.getInitialProps=="function"){
-                    const result=el.getInitialProps()
-                    if(result instanceof Promise){
-                        setInitialPropsState(await result)
-                    }else{
-                        setInitialPropsState(result)
-                    }
-                }else{
-                    setInitialPropsState(el.getInitialProps)
+                if (!_isUnMound) {
+                    setAuthState({auth: true, allows: el.access, forbid: forbid})
                 }
-            }else{
-                setInitialPropsState({})
+            } else {
+                if (!_isUnMound) {
+                    setAuthState({auth: true, allows: el.access})
+                }
             }
+
+            if (el.getInitialProps) {
+                if (typeof el.getInitialProps == "function") {
+                    const result = el.getInitialProps()
+                    if (result instanceof Promise) {
+                        result.then((ld)=>{
+                            if (!_isUnMound) {
+                                setInitialPropsState(ld)
+                            }
+                        })
+                    } else {
+                        if (!_isUnMound) {
+                            setInitialPropsState(result)
+                        }
+                    }
+                } else {
+                    if (!_isUnMound) {
+
+                        setInitialPropsState(el.getInitialProps)
+                    }
+                }
+            } else {
+                if (!_isUnMound) {
+                    setInitialPropsState({})
+                }
+            }
+        })
+        /*
+        (async () => {
+            const el = await getWrapRoutePropsElement(props, umiAppContext)
+
         })()
+        */
+        return ()=>{
+            _isUnMound=true
+        }
         // @ts-ignore
     }, [routeContext.route?.props?.skipAccess])
 
